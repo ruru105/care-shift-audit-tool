@@ -1,0 +1,14 @@
+[
+ {"name":"法定労働時間","category":"法令","summary":"原則1日8時間・週40時間。V1は制度の成立と日・週・期間別の時間外計算を自動認定しない。","url":"https://www.mhlw.go.jp/stf/seisakunitsuite/bunya/koyou_roudou/roudoukijun/roudouzikan/index.html"},
+ {"name":"休憩","category":"法令","summary":"労働6時間超は45分以上、8時間超は60分以上。勤務途中の業務から解放された休憩。電話・待機は休憩に数えない。V1は入力予定を検査し、実取得の証明はしない。","url":"https://www.mhlw.go.jp/bunya/roudoukijun/roudoujouken02/jikan.html"},
+ {"name":"法定休日","category":"法令／施設前提","summary":"原則毎週1日または4週4日。V1は月曜起算の週休方式・休日労働なしを施設前提として、公休と実勤務の矛盾を確認。4週4休・振替等は自動適用しない。","url":"https://www.mhlw.go.jp/stf/seisakunitsuite/bunya/koyou_roudou/roudoukijun/roudouzikan/index.html"},
+ {"name":"1か月変形制","category":"法令・要確認","summary":"労使協定または就業規則等で対象者・期間・起算日・各労働日と時間等を定め届出。予定の事前特定が必要。40×暦日数÷7が総枠。V1は導入済みと断定しない。","url":"https://www.mhlw.go.jp/content/140811-2.pdf"},
+ {"name":"時間外・36協定","category":"法令・一部実装","summary":"通常月45h・年360h。特別条項でも年720h、休日労働込みで月100h未満・2〜6か月平均80h以内、45h超は年6か月まで。V1は確認済み集計値の上限を検査。","url":"https://hatarakikatakaikaku.mhlw.go.jp/overtime.html"},
+ {"name":"年休の基本","category":"法令","summary":"原則6か月継続勤務・出勤率8割以上で発生。短時間労働者も条件に応じ対象。付与残数・繰越・時効・完全性の監査は未実装。","url":"https://hatarakikatakaikaku.mhlw.go.jp/salaried.html"},
+ {"name":"年休5日取得","category":"法令・一部実装","summary":"法定付与10日以上の対象者は基準日から1年以内に5日取得。本人取得・計画年休等を含み、半日は0.5日、時間単位年休は算入しない。V1は通常基準日の入力実績だけ検査。","url":"https://hatarakikatakaikaku.mhlw.go.jp/assets/img/salaried/000463186.pdf"},
+ {"name":"勤務間隔","category":"努力義務／施設基準","summary":"勤務間インターバルの導入は努力義務。V1の11時間は仮想施設独自の安全基準で、一律の法定義務とはしない。","url":"https://work-holiday.mhlw.go.jp/interval/"},
+ {"name":"配置人数","category":"施設独自ルール","summary":"各階早遅最低4人・目標5人。実配置は07〜19時4人、19〜07時2人。夜勤開始は各階2＋統括2。夜間はフロア代替とは別に自由な統括1人。施設種別の法定配置とは別。","url":"添付マスタープロンプト／旧施設設定"},
+ {"name":"夜勤休憩","category":"施設独自ルール","summary":"既存の食事1時間＋連続2時間を保持（合計3時間）。休憩中断は休憩に計上せず、補完者を明示。休憩中の通常呼出しを前提にしない。","url":"旧Excel勤務区分・施設設定／添付マスタープロンプト"},
+ {"name":"公休120日","category":"施設独自目標","summary":"年間120日は施設目標。年休とは別。夜勤明けを公休として数えない。年間データがないため達成を宣言しない。","url":"添付マスタープロンプト"},
+ {"name":"入浴・休暇除外","category":"施設独自ルール","summary":"入浴担当に性別条件を設けない。本シミュレーションではリフレッシュ休暇を勤務・公休・有給判定に加味しない。","url":"添付マスタープロンプト"}
+]

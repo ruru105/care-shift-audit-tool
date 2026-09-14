@@ -1,0 +1,98 @@
+[
+  {
+    "case": "早番不足",
+    "expected": "EARLY_SHORT",
+    "detected": true,
+    "red": 5
+  },
+  {
+    "case": "遅番不足",
+    "expected": "LATE_SHORT",
+    "detected": true,
+    "red": 5
+  },
+  {
+    "case": "休憩重複",
+    "expected": "ACTIVITY_OVERLAP",
+    "detected": true,
+    "red": 3
+  },
+  {
+    "case": "夜間人数不足",
+    "expected": "COVERAGE_SHORT",
+    "detected": true,
+    "red": 1
+  },
+  {
+    "case": "夜勤休憩重複",
+    "expected": "COVERAGE_SHORT",
+    "detected": true,
+    "red": 2
+  },
+  {
+    "case": "夜勤不可",
+    "expected": "NIGHT_FORBIDDEN",
+    "detected": true,
+    "red": 2
+  },
+  {
+    "case": "希望休違反",
+    "expected": "REQUEST_CONFLICT",
+    "detected": true,
+    "red": 1
+  },
+  {
+    "case": "夜勤明け矛盾",
+    "expected": "POST_NIGHT_CONFLICT",
+    "detected": true,
+    "red": 11
+  },
+  {
+    "case": "入浴で人数割れ",
+    "expected": "COVERAGE_SHORT",
+    "detected": true,
+    "red": 2
+  },
+  {
+    "case": "残業不可",
+    "expected": "OT_FORBIDDEN",
+    "detected": true,
+    "red": 1
+  },
+  {
+    "case": "残業上限",
+    "expected": "OT_MONTH",
+    "detected": true,
+    "red": 1
+  },
+  {
+    "case": "休日不足",
+    "expected": "WEEKLY_HOLIDAY",
+    "detected": true,
+    "red": 28
+  },
+  {
+    "case": "月間時間枠",
+    "expected": "MONTH_PLAN_FRAME",
+    "detected": true,
+    "red": 31
+  },
+  {
+    "case": "短時間外の配置",
+    "expected": "ACTIVITY_OUTSIDE_SHIFT",
+    "detected": true,
+    "red": 1
+  },
+  {
+    "case": "休憩中断",
+    "expected": "BREAK_INTERRUPTED",
+    "detected": true,
+    "red": 2
+  },
+  {
+    "case": "勤務間隔不足",
+    "expected": "INTERVAL_SHORT",
+    "detected": true,
+    "red": 58
+  }
+]
