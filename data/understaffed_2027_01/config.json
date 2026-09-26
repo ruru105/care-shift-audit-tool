@@ -1,0 +1,90 @@
+{
+  "start": "2027-01-01T00:00",
+  "end": "2027-02-01T00:00",
+  "as_of": "2027-01-31",
+  "floors": [
+    "1F",
+    "2F",
+    "3F"
+  ],
+  "day_start": "07:00",
+  "day_end": "19:00",
+  "day_min": 4,
+  "night_min": 2,
+  "early_min": 4,
+  "late_min": 4,
+  "early_target": 5,
+  "late_target": 5,
+  "free_supervisor_min": 1,
+  "night_supervisors": 2,
+  "night_continuous_minutes": 120,
+  "interval_hours": 11,
+  "annual_holidays": 120,
+  "special_clause": false,
+  "work_system": "monthly_variable_unconfirmed",
+  "shifts": {
+    "早": {
+      "start": "07:00",
+      "end": "16:00",
+      "next_day": 0,
+      "break_minutes": 60,
+      "night": false
+    },
+    "日": {
+      "start": "08:30",
+      "end": "17:30",
+      "next_day": 0,
+      "break_minutes": 60,
+      "night": false
+    },
+    "遅": {
+      "start": "10:00",
+      "end": "19:00",
+      "next_day": 0,
+      "break_minutes": 60,
+      "night": false
+    },
+    "午": {
+      "start": "07:00",
+      "end": "12:00",
+      "next_day": 0,
+      "break_minutes": 0,
+      "night": false
+    },
+    "後": {
+      "start": "14:00",
+      "end": "19:00",
+      "next_day": 0,
+      "break_minutes": 0,
+      "night": false
+    },
+    "短A": {
+      "start": "22:00",
+      "end": "01:00",
+      "next_day": 1,
+      "break_minutes": 0,
+      "night": false
+    },
+    "短B": {
+      "start": "01:00",
+      "end": "04:00",
+      "next_day": 0,
+      "break_minutes": 0,
+      "night": false
+    },
+    "夜": {
+      "start": "16:00",
+      "end": "09:00",
+      "next_day": 1,
+      "break_minutes": 180,
+      "night": true
+    },
+    "統": {
+      "start": "16:00",
+      "end": "09:00",
+      "next_day": 1,
+      "break_minutes": 180,
+      "night": true
+    }
+  }
+}

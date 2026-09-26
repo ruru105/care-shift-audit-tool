@@ -5,8 +5,15 @@ import calendar
 import hashlib
 import json
 
-OFF_CODES = {"休", "有", "明"}
 STEP = timedelta(minutes=30)
+
+# 以下は既定値。config.jsonでsupervisor_role等を指定すれば、施設ごとの呼び方・コードに変更できる。
+DEFAULT_SUPERVISOR_ROLE = "統括"
+DEFAULT_SUPERVISOR_CODE = "統"
+DEFAULT_OFF_CODE = "休"
+DEFAULT_POST_NIGHT_CODE = "明"
+DEFAULT_PAID_LEAVE_CODE = "有"
+DEFAULT_WEEK_START_WEEKDAY = 0  # 0=月曜(Python標準のweekday()に合わせる)
 
 
 # 時間の基本処理。30分以外の端数を切り捨てて安全扱いしない。
@@ -110,6 +117,17 @@ def distribution_status(issues):
 def audit(data):
     config = data["config"]
     issues, coverage, workload = [], [], []
+    # 施設ごとに呼び方・コードを変えられるようにする(未指定なら既定値のまま動く)。
+    SUPERVISOR = config.get("supervisor_role", DEFAULT_SUPERVISOR_ROLE)
+    SUPERVISOR_CODE = config.get("supervisor_shift_code", DEFAULT_SUPERVISOR_CODE)
+    OFF_CODE = config.get("off_code", DEFAULT_OFF_CODE)
+    POST_NIGHT_CODE = config.get("post_night_code", DEFAULT_POST_NIGHT_CODE)
+    PAID_LEAVE_CODE = config.get("paid_leave_code", DEFAULT_PAID_LEAVE_CODE)
+    OFF_CODES = {OFF_CODE, PAID_LEAVE_CODE, POST_NIGHT_CODE}
+    WEEK_START = int(config.get("week_start_weekday", DEFAULT_WEEK_START_WEEKDAY))
+
+    def week_of(day):
+        return day - timedelta(days=(day.weekday() - WEEK_START) % 7)
 
     def flag(code, message, staff_id="", when="", floor="", severity="RED", category="施設ルール"):
         issues.append(dict(severity=severity, code=code, category=category,
@@ -126,7 +144,7 @@ def audit(data):
         if end <= start or (end-start).days > 62:
             raise ValueError("監査期間は正の長さで最大62日")
         floors = config["floors"]
-        if not floors or len(set(floors)) != len(floors) or "統括" in floors:
+        if not floors or len(set(floors)) != len(floors) or SUPERVISOR in floors:
             raise ValueError("フロア名が空または重複")
         shifts = config["shifts"]
         for code, spec in shifts.items():
@@ -175,8 +193,8 @@ def audit(data):
             person, spec = staff[sid], shifts[code]
             begin = stamp(f"{day}T{spec['start']}")
             finish = stamp(f"{day}T{spec['end']}") + timedelta(days=int(spec["next_day"]))
-            place = row.get("floor") or ("統括" if code == "統" else person["floor"])
-            if place not in floors + ["統括"]:
+            place = row.get("floor") or (SUPERVISOR if code == SUPERVISOR_CODE else person["floor"])
+            if place not in floors + [SUPERVISOR]:
                 raise ValueError("配置先が不正")
             a = dict(staff_id=sid, date=day, code=code, start=begin, end=finish,
                      floor=place, breaks=set(), activities={}, points=set(ticks(begin, finish)))
@@ -187,7 +205,7 @@ def audit(data):
                 flag("CODE_RESTRICTION", f"勤務可能コード外: {code}", sid, day)
             if spec.get("night") and person["night_allowed"] != "可":
                 flag("NIGHT_FORBIDDEN", "長時間夜勤不可者への夜勤", sid, day)
-            if place == "統括" and person["supervisor"] != "可":
+            if place == SUPERVISOR and person["supervisor"] != "可":
                 flag("SUPERVISOR_FORBIDDEN", "統括対応不可", sid, day)
             allowed_days = person.get("weekdays", "0・1・2・3・4・5・6").split("・")
             for part_day in {t.date() for t in a["points"]}:
@@ -213,9 +231,9 @@ def audit(data):
             if a is None or begin < a["start"] or finish > a["end"] or finish <= begin:
                 flag("ACTIVITY_OUTSIDE_SHIFT", "非勤務・短時間勤務の時間外に担当あり", sid, begin, category="入力整合")
                 continue
-            if kind == "TRANSFER" and row.get("target") not in floors + ["統括"]:
+            if kind == "TRANSFER" and row.get("target") not in floors + [SUPERVISOR]:
                 raise ValueError("応援先が不正")
-            if kind == "TRANSFER" and row.get("target") == "統括" and staff[sid]["supervisor"] != "可":
+            if kind == "TRANSFER" and row.get("target") == SUPERVISOR and staff[sid]["supervisor"] != "可":
                 flag("SUPERVISOR_FORBIDDEN", "統括対応不可の職員を統括に配置", sid, begin)
             if kind == "TRANSFER" and row.get("target") != a["floor"] and staff[sid].get("transfer_allowed", "可") != "可":
                 flag("TRANSFER_FORBIDDEN", "他フロア応援不可", sid, begin)
@@ -258,7 +276,7 @@ def audit(data):
     for row in data["requests"]:
         try:
             sid, day = row["staff_id"], date.fromisoformat(row["date"])
-            if sid not in staff or row["code"] not in {"休", "有"}:
+            if sid not in staff or row["code"] not in {OFF_CODE, PAID_LEAVE_CODE}:
                 raise ValueError("希望休の職員・種別が不正")
             if schedule.get((sid, day)) != row["code"] or any(t.date() == day for t in work_points[sid]):
                 flag("REQUEST_CONFLICT", f"{row['code']}希望日に割当または未入力", sid, day)
@@ -278,18 +296,18 @@ def audit(data):
                 continue
             previous_code = schedule.get((sid, day-timedelta(days=1)))
             was_night = previous_code in shifts and shifts[previous_code].get("next_day")
-            if was_night and code != "明":
+            if was_night and code != POST_NIGHT_CODE:
                 flag("POST_NIGHT_CONFLICT", "前日夜勤の終了日は明とする施設ルール", sid, day)
-            if code == "明" and not was_night:
+            if code == POST_NIGHT_CODE and not was_night:
                 flag("ORPHAN_POST_NIGHT", "明に対応する前日夜勤がない", sid, day,
                      severity="YELLOW" if previous_code is None else "RED", category="入力整合")
-            if code in {"休", "有"} and any(t.date() == day for t in work_points[sid]):
+            if code in {OFF_CODE, PAID_LEAVE_CODE} and any(t.date() == day for t in work_points[sid]):
                 flag("OFF_DAY_WORK", "公休・有休の日に実勤務時間がある", sid, day)
-        # 暦週を分割集計。月曜始まりはこの仮想施設の採用前提。
+        # 暦週を分割集計。週の開始曜日はconfigのweek_start_weekday(既定は月曜)。
         weekly = defaultdict(int)
         monthly = defaultdict(int)
         for point in work_points[sid]:
-            week = point.date()-timedelta(days=point.weekday())
+            week = week_of(point.date())
             weekly[week] += 30
             monthly[point.strftime("%Y-%m")] += 30
         for week, minutes in weekly.items():
@@ -301,7 +319,7 @@ def audit(data):
                      severity="YELLOW", category="契約確認")
             full_week = list(dates(week,week+timedelta(days=6)))
             if all((sid,d) in schedule for d in full_week):
-                rests = [d for d in full_week if schedule[sid,d] == "休" and not any(t.date()==d for t in work_points[sid])]
+                rests = [d for d in full_week if schedule[sid,d] == OFF_CODE and not any(t.date()==d for t in work_points[sid])]
                 if not rests:
                     flag("WEEKLY_HOLIDAY", "週1日の公休なし（週休方式の仮想施設。4週4休・休日労働の例外は未採用）", sid, week)
         for month, minutes in monthly.items():
@@ -325,8 +343,8 @@ def audit(data):
                 if count < limit:
                     flag("EARLY_SHORT" if code=="早" else "LATE_SHORT", f"{code}番 {count}/{limit}人", when=day, floor=floor)
         night_rows = [a for a in assignments if a["date"]==day and shifts[a["code"]].get("night")]
-        if sum(a["floor"]=="統括" for a in night_rows) < config["night_supervisors"]:
-            flag("NIGHT_SUPERVISOR_SHIFT", "夜勤統括の開始人数不足", when=day, floor="統括")
+        if sum(a["floor"]==SUPERVISOR for a in night_rows) < config["night_supervisors"]:
+            flag("NIGHT_SUPERVISOR_SHIFT", "夜勤統括の開始人数不足", when=day, floor=SUPERVISOR)
         for floor in floors:
             if sum(a["floor"]==floor for a in night_rows)<config["night_min"]:
                 flag("NIGHT_SHIFT_SHORT", "夜勤のフロア担当開始人数不足", when=day, floor=floor)
@@ -337,7 +355,7 @@ def audit(data):
         occupied_by_time[point].append((sid, group))
     for point in ticks(start, end):
         day_time = day_start <= point.time() < day_end
-        buckets = {f:dict(planned=set(), breaks=set(), bath=set(), other=set(), out=set(), incoming=set(), active=set()) for f in floors+["統括"]}
+        buckets = {f:dict(planned=set(), breaks=set(), bath=set(), other=set(), out=set(), incoming=set(), active=set()) for f in floors+[SUPERVISOR]}
         for sid, group in occupied_by_time[point]:
             a = group[0]
             b = buckets[a["floor"]]
@@ -360,7 +378,7 @@ def audit(data):
             else:
                 b["active"].add(sid)
         for floor, b in buckets.items():
-            minimum = (0 if day_time else config["free_supervisor_min"]) if floor=="統括" else (config["day_min"] if day_time else config["night_min"])
+            minimum = (0 if day_time else config["free_supervisor_min"]) if floor==SUPERVISOR else (config["day_min"] if day_time else config["night_min"])
             deficit = max(0, minimum-len(b["active"]))
             row = dict(time=point.isoformat(timespec="minutes"), floor=floor,
                        **{k:len(v) for k,v in b.items()}, minimum=minimum, deficit=deficit,

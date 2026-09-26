@@ -50,6 +50,15 @@ V1は架空施設向けのポートフォリオ・検証版です。正常基準
 休憩の6時間・8時間境界、残業の上限境界、年休の適用対象、入力順序、重複・欠損・端数時刻も検査します。
 この結果は用意したデータについての検証であり、すべての入力や法令の無欠陥を保証するものではありません。
 
+正常基準と同じ72人＋架空職員（合計122人）で、監査期間を2026年10月の1か月分（31日×48枠×4区分=5,952枠）に広げた例も用意しています（`data/one_month_example/`）。
+結果は正常基準と同じく人数不足0枠・重大NG0件です。ただし、この例の配置は月間の残業上限・夜勤回数上限に近づくところまでは作り込んでおらず、月単位のチェックが実際に働く様子を見せるものではありません。月をまたぐ規模でも監査ロジックが崩れないことの確認が主な目的です。
+
+原本の72人だけを使い、人が足りない枠が出ても増員しない例（`data/understaffed_2026_10`〜`understaffed_2027_03`）も用意しています。2026年10月〜2027年3月の6か月間、施設ルールを守ったまま72人だけで配置を続けると、実際にどれだけ手薄になるかを検証したものです（詳細は[テスト結果](docs/TEST_REPORT.md)）。増員するか休日出勤で埋めるかの判断は、この重大NG・要確認の表示そのものが管理者への材料になるという位置づけで、ツール側で解決策を提案する機能は作っていません。
+
+## Configuration Beyond Defaults
+
+「統括」という役割名・「統」という勤務コード、「休・明・有」の3コード、週の起算曜日は、config.jsonの`supervisor_role`・`supervisor_shift_code`・`off_code`・`post_night_code`・`paid_leave_code`・`week_start_weekday`で施設ごとに変更できます。未指定の場合は元の値のまま動作し、既存データの判定結果は変わりません。
+
 ## Human / AI Collaboration
 
 **Human-led / AI-assisted development（人間主導・AI支援開発）**。
@@ -101,6 +110,8 @@ py -m care_shift_audit examples/Care_Shift_Audit_V1_Manager.xlsx --out reports/f
 ```powershell
 py -m care_shift_audit data/intentional_ng --out reports/ng
 py -m care_shift_audit data/legacy_import --out reports/legacy
+py -m care_shift_audit data/one_month_example --out reports/one_month
+py -m care_shift_audit data/understaffed_2026_10 --out reports/understaffed_2026_10
 py -m pytest -q
 ```
 
@@ -113,7 +124,9 @@ Windows＋Microsoft Excelでの実機確認は未実施です。
 ```text
 src/care_shift_audit/   入力・監査・出力を分離したPython
 tests/                 正常系・異常系・境界・配布停止
-data/baseline/         正常基準のCSVと設定
+data/baseline/         正常基準のCSVと設定（7日間）
+data/one_month_example/ 同じ設定を2026年10月の1か月分に広げた例
+data/understaffed_*/   72人だけ・増員なしで6か月分を組んだ、手薄をそのまま見せる例
 data/intentional_ng/   入浴による不足を含む比較例
 data/legacy_import/    既存Excelから移した入力
 data/legacy/           元Excel2点と移行用抽出データ（未変更）

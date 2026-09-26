@@ -19,7 +19,9 @@
 
 `data/legacy/`に原本2件をそのまま保持しています。原本は現行仕様への更新版ではなく、開発履歴の参照用です。
 `source_extract.json`は元Excelの全シートを読み取り、値と数式文字列を保持した移行用データです。
-`tests/build_fixtures.py data/legacy/source_extract.json`で基準例と旧版移行データを再作成できます。
+`tests/build_fixtures.py data/legacy/source_extract.json`で基準例（7日間）・1か月分の例・旧版移行データを再作成できます。
+`tests/build_understaffed_series.py data/legacy/source_extract.json`は、原本72人だけ・増員なしで2026年10月〜2027年3月の6か月分を作ります。
+両スクリプトの勤務・休憩・担当を組み立てる部分は`tests/scenario_builder.py`に共通化してあり、新しい例を増やす際はここを呼び出すだけで済みます(2026-09-26追加)。
 このスクリプトは検証用資料を作る開発補助で、利用者向けのシフト最適化機能ではありません。
 
 元の72人のID、夜勤可否、勤務可能コード、統括可否、契約時間等を保持。

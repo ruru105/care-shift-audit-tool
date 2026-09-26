@@ -17,6 +17,11 @@ def baseline():
     return load_folder(ROOT/'data/baseline')
 
 
+@pytest.fixture(scope='module')
+def one_month():
+    return load_folder(ROOT/'data/one_month_example')
+
+
 def test_normal_has_zero_critical_and_no_shortage(baseline):
     result=audit(baseline)
     assert result['counts'].get('RED',0)==0
@@ -24,6 +29,100 @@ def test_normal_has_zero_critical_and_no_shortage(baseline):
     assert all(row['deficit']==0 for row in result['coverage'])
     assert result['status']=='YELLOW'
     assert result['counts']['YELLOW']==5
+
+
+def test_one_month_example_has_zero_critical_and_no_shortage(one_month):
+    """7日間だけでなく、1か月分の期間でも同じ監査ロジックが崩れないことを確認する。"""
+    result=audit(one_month)
+    assert result['counts'].get('RED',0)==0
+    assert len(result['coverage'])==31*48*4
+    assert all(row['deficit']==0 for row in result['coverage'])
+    assert result['status']=='YELLOW'
+    assert result['counts']['YELLOW']==5
+
+
+def test_one_month_example_actually_spans_calendar_month(one_month):
+    """監査期間がconfigどおり2026年10月1か月分になっていることを日付そのもので確認する。"""
+    days={row['date'] for row in one_month['schedule']
+          if one_month['config']['start']<=row['date']+'T00:00'<one_month['config']['end']}
+    assert days=={f'2026-10-{d:02d}' for d in range(1,32)}
+
+
+UNDERSTAFFED_EXPECTED = {
+    '2026_10': dict(RED=1764, YELLOW=53, slots=5952),
+    '2026_11': dict(RED=3270, YELLOW=53, slots=5760),
+    '2026_12': dict(RED=3303, YELLOW=53, slots=5952),
+    '2027_01': dict(RED=3366, YELLOW=41, slots=5952),
+    '2027_02': dict(RED=3018, YELLOW=5, slots=5376),
+    '2027_03': dict(RED=3292, YELLOW=5, slots=5952),
+}
+
+
+@pytest.mark.parametrize('month', sorted(UNDERSTAFFED_EXPECTED))
+def test_understaffed_series_shows_real_shortage_without_added_staff(month):
+    """72人だけ・増員なしで6か月を組むと、月ごとに実際にどれだけ手薄かを確認する(2026-09-26 陽司さんとの合意事項)。
+    数値は既知の生成結果を固定したもの。tests/build_understaffed_series.pyを変えたら意図的な変化か確認すること。"""
+    data=load_folder(ROOT/f'data/understaffed_{month}')
+    assert len(data['staff'])==72
+    result=audit(data)
+    expected=UNDERSTAFFED_EXPECTED[month]
+    assert result['status']=='RED'
+    assert result['counts'].get('RED',0)==expected['RED']
+    assert result['counts'].get('YELLOW',0)==expected['YELLOW']
+    assert len(result['coverage'])==expected['slots']
+    assert sum(1 for row in result['coverage'] if row['deficit']>0)>0
+
+
+def test_supervisor_and_off_codes_are_configurable(baseline):
+    """「統括」「統」「休」「明」「有」はconfigで名前・コードを変えられる(施設ごとの呼び方に対応)。
+    名前だけ変えても、正常基準の判定結果(件数)がまったく変わらないことを確認する。"""
+    data=deepcopy(baseline)
+    data['config']['supervisor_role']='フリー'
+    data['config']['supervisor_shift_code']='F'
+    data['config']['off_code']='OFF'
+    data['config']['post_night_code']='AKE'
+    data['config']['paid_leave_code']='PTO'
+    remap={'統':'F','休':'OFF','明':'AKE','有':'PTO'}
+    data['config']['shifts']={remap.get(k,k):v for k,v in data['config']['shifts'].items()}
+    for row in data['schedule']:
+        row['code']=remap.get(row['code'],row['code'])
+        if row['floor']=='統括':row['floor']='フリー'
+    for row in data['requests']:
+        row['code']=remap.get(row['code'],row['code'])
+    for row in data['activities']:
+        if row.get('target')=='統括':row['target']='フリー'
+    for row in data['staff']:
+        row['allowed_codes']='・'.join(remap.get(c,c) for c in row['allowed_codes'].split('・'))
+    before=audit(baseline)
+    after=audit(data)
+    assert after['counts']==before['counts']
+    assert len(after['coverage'])==len(before['coverage'])
+    assert {r['floor'] for r in after['coverage']}=={'1F','2F','3F','フリー'}
+
+
+def test_week_start_weekday_is_configurable(baseline):
+    """week_start_weekdayを変えると、週の集計区切りが実際にその曜日から始まるようになることを確認する。"""
+    data=deepcopy(baseline)
+    monday_periods={row['period'] for row in audit(data)['workload']}
+    data['config']['week_start_weekday']=6  # 日曜始まり
+    sunday_periods={row['period'] for row in audit(data)['workload']}
+    assert monday_periods!=sunday_periods
+    assert all(date.fromisoformat(p).weekday()==0 for p in monday_periods)
+    assert all(date.fromisoformat(p).weekday()==6 for p in sunday_periods)
+
+
+def test_understaffed_series_leave_catches_up_by_february(month=None):
+    """まだ5日取得できていない人の数が、2月には0人になる(今回の均等割りロジックの結果)ことを確認する。"""
+    counts=[]
+    for month in sorted(UNDERSTAFFED_EXPECTED):
+        data=load_folder(ROOT/f'data/understaffed_{month}')
+        as_of=date.fromisoformat(data['config']['as_of'])
+        pending=sum(1 for row in data['leave_ledger']
+                    if leave_findings(row, as_of) and leave_findings(row, as_of)[0][1] in ('LEAVE_PENDING', 'LEAVE_FIVE'))
+        counts.append(pending)
+    assert counts[0] > 0  # 10月時点ではまだ足りない人がいる
+    assert counts[-2:] == [0, 0]  # 2月・3月には全員追いついている
+    assert all(c1 >= c2 for c1, c2 in zip(counts, counts[1:]))  # 単調に減っていく
 
 
 @pytest.mark.parametrize('index',range(len(CASES)),ids=[c[0] for c in CASES])
