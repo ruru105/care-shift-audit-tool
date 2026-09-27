@@ -2,7 +2,7 @@
 
 実行環境：Linux、Python 3.12.14、pytest 8.4.2。
 実行コマンド：`python -m pytest -q --junitxml=docs/test-results.xml`。
-結果：**57 passed**。GitHub Actions上でも実行し、成功しています。
+結果：**60 passed**。GitHub Actions上でも実行し、成功しています。
 
 |対象|重大NG|要確認|配布判定|
 |---|---:|---:|---|
@@ -36,6 +36,12 @@ NG数は原因の種類数ではありません。同じ不足が2つの30分枠
 
 「統括」という役割名・「統」という勤務コード、「休・明・有」の3コード、週の起算曜日は、これまでengine.py内に固定で書かれていましたが、config.jsonの`supervisor_role`・`supervisor_shift_code`・`off_code`・`post_night_code`・`paid_leave_code`・`week_start_weekday`で施設ごとに変更できるようにしました。
 指定がない場合は元の値のまま動くため、既存のデータ・テストの結果は一切変わりません。実際にこれらを別の名前・コードに変えても、判定結果(重大NG・要確認の件数)がまったく変わらないことをテストで確認しています。
+
+## CSV見出しの日本語化と出力順の再現性（2026-09-27 追加）
+
+陽司さんが実際にレポートを確認する中で、「配布用CSVの列見出しが英語(time・floor・active等)で分かりにくい」との指摘がありました。`coverage.csv`・`issues.csv`・`workload.csv`・`staff_draft.csv`の見出し行を日本語表記(日時・フロア・実働人数等)に変更しました。内部で使うキー名(英語)自体は変えていないため、監査ロジックや判定結果には影響ありません。
+
+この確認の過程で、`issues.csv`と`workload.csv`が、実行するたびに行の並び順が入れ替わる(Pythonの集合の走査順に依存していた)ことを発見しました。件数や判定結果はもともと毎回正しく同じでしたが、一覧の並び順という点で「同じ入力なら毎回同じ出力になる」という再現性が崩れていました。職員ID順に並べ替える形で修正し、実行するたびに同じ並び順になることをテストで確認しています(`test_workload_rows_sorted_for_reproducibility`・`test_issues_rows_sorted_for_reproducibility`)。
 
 ## 独立した意図的NG 16種類
 

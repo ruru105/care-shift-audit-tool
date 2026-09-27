@@ -247,3 +247,38 @@ def test_settings_not_hardcoded(baseline):
 def test_missing_input_is_yellow(baseline):
     data=deepcopy(baseline);data['schedule']=[r for r in data['schedule'] if not (r['date']=='2026-10-06' and r['code']=='休')]
     assert 'SCHEDULE_MISSING' in {x['code'] for x in audit(data)['issues']}
+
+
+def test_workload_rows_sorted_for_reproducibility(baseline):
+    """workloadの並び順が集合の走査順に依存しないことを確認する(2026-09-27発見・修正)。"""
+    result=audit(baseline)
+    rows=result['workload']
+    assert len(rows)>0
+    assert rows==sorted(rows,key=lambda w:(w['staff_id'],w['period']))
+
+
+def test_issues_rows_sorted_for_reproducibility():
+    """issuesの並び順も集合の走査順に依存しないことを確認する(2026-09-27発見・修正)。データ量の多い旧移行データで発生を確認済み。"""
+    data=load_folder(ROOT/'data/legacy_import')
+    result=audit(data)
+    rows=result['issues']
+    assert len(rows)>0
+    assert rows==sorted(rows,key=lambda x:(x['staff_id'],x['when'],x['floor'],x['code']))
+
+
+def test_csv_headers_are_japanese(baseline,tmp_path):
+    """職員に渡す前提のCSVは、見出しが日本語であることを確認する(2026-09-27追加)。内部のキー名(英語)自体は変えていない。"""
+    export_report(baseline,tmp_path)
+    import csv
+    with (tmp_path/'coverage.csv').open(encoding='utf-8-sig') as f:
+        header=next(csv.reader(f))
+    assert header==['日時','フロア','予定人数','休憩中','入浴介助中','その他離脱','応援で外出中','応援受入','実働人数','最低人数','不足人数','判定','職員ID']
+    with (tmp_path/'issues.csv').open(encoding='utf-8-sig') as f:
+        header=next(csv.reader(f))
+    assert header==['重大度','検出コード','分類','職員ID','日時','フロア','内容']
+    with (tmp_path/'workload.csv').open(encoding='utf-8-sig') as f:
+        header=next(csv.reader(f))
+    assert header==['職員ID','期間','実働時間','契約時間']
+    with (tmp_path/'staff_draft.csv').open(encoding='utf-8-sig') as f:
+        header=next(csv.reader(f))
+    assert header==['日付','曜日','職員ID','氏名','勤務コード','時間','状態']

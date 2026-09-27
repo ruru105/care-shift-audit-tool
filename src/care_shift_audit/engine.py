@@ -134,8 +134,12 @@ def audit(data):
                            staff_id=staff_id, when=str(when), floor=floor, message=message))
 
     def result():
-        return dict(status=distribution_status(issues), issues=issues, coverage=coverage,
-                    workload=workload, input_sha256=fingerprint(data),
+        # issues・workloadは集合の走査順に依存していたため、並べ替えて再現性を確保する(件数・判定は変えない)。
+        return dict(status=distribution_status(issues),
+                    issues=sorted(issues, key=lambda x: (x["staff_id"], x["when"], x["floor"], x["code"])),
+                    coverage=coverage,
+                    workload=sorted(workload, key=lambda w: (w["staff_id"], w["period"])),
+                    input_sha256=fingerprint(data),
                     counts=dict(Counter(x["severity"] for x in issues)))
 
     # 必須マスタ・入力の検査。入力が壊れた場合も配布不可として返す。

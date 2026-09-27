@@ -1,8 +1,8 @@
-﻿severity,code,category,staff_id,when,floor,message
+﻿重大度,検出コード,分類,職員ID,日時,フロア,内容
+YELLOW,FACILITY_LEGAL_STAFFING,未確認・V1制約,,,,施設種別・資格・利用者数に応じた法定配置基準は未実装
+YELLOW,LEAVE_HISTORY_REVIEW,未確認・V1制約,,,,全員の年休付与・残数・取得履歴の完全性を未確認
+YELLOW,MONTH_BOUNDARY_REVIEW,未確認・V1制約,,,,前後月を含む完全な勤務・休暇履歴の監査が未完了
+YELLOW,WORK_SYSTEM_REVIEW,未確認・V1制約,,,,変形労働時間制の手続・事前特定・日週月の時間外計算と36協定は個別審査が必要
+YELLOW,YEAR_HOLIDAY_REVIEW,未確認・V1制約,,,,年間公休120日は施設目標。年間実績は未監査
 RED,COVERAGE_SHORT,施設ルール,,2026-10-06 09:00:00,1F,実働3人・最低4人・不足1人
 RED,COVERAGE_SHORT,施設ルール,,2026-10-06 09:30:00,1F,実働3人・最低4人・不足1人
-YELLOW,MONTH_BOUNDARY_REVIEW,未確認・V1制約,,,,前後月を含む完全な勤務・休暇履歴の監査が未完了
-YELLOW,YEAR_HOLIDAY_REVIEW,未確認・V1制約,,,,年間公休120日は施設目標。年間実績は未監査
-YELLOW,LEAVE_HISTORY_REVIEW,未確認・V1制約,,,,全員の年休付与・残数・取得履歴の完全性を未確認
-YELLOW,WORK_SYSTEM_REVIEW,未確認・V1制約,,,,変形労働時間制の手続・事前特定・日週月の時間外計算と36協定は個別審査が必要
-YELLOW,FACILITY_LEGAL_STAFFING,未確認・V1制約,,,,施設種別・資格・利用者数に応じた法定配置基準は未実装

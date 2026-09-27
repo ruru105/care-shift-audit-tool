@@ -3,21 +3,12 @@
   "issues": [
     {
       "severity": "YELLOW",
-      "code": "MONTH_BOUNDARY_REVIEW",
+      "code": "FACILITY_LEGAL_STAFFING",
       "category": "未確認・V1制約",
       "staff_id": "",
       "when": "",
       "floor": "",
-      "message": "前後月を含む完全な勤務・休暇履歴の監査が未完了"
-    },
-    {
-      "severity": "YELLOW",
-      "code": "YEAR_HOLIDAY_REVIEW",
-      "category": "未確認・V1制約",
-      "staff_id": "",
-      "when": "",
-      "floor": "",
-      "message": "年間公休120日は施設目標。年間実績は未監査"
+      "message": "施設種別・資格・利用者数に応じた法定配置基準は未実装"
     },
     {
       "severity": "YELLOW",
@@ -30,6 +21,15 @@
     },
     {
       "severity": "YELLOW",
+      "code": "MONTH_BOUNDARY_REVIEW",
+      "category": "未確認・V1制約",
+      "staff_id": "",
+      "when": "",
+      "floor": "",
+      "message": "前後月を含む完全な勤務・休暇履歴の監査が未完了"
+    },
+    {
+      "severity": "YELLOW",
       "code": "WORK_SYSTEM_REVIEW",
       "category": "未確認・V1制約",
       "staff_id": "",
@@ -39,12 +39,12 @@
     },
     {
       "severity": "YELLOW",
-      "code": "FACILITY_LEGAL_STAFFING",
+      "code": "YEAR_HOLIDAY_REVIEW",
       "category": "未確認・V1制約",
       "staff_id": "",
       "when": "",
       "floor": "",
-      "message": "施設種別・資格・利用者数に応じた法定配置基準は未実装"
+      "message": "年間公休120日は施設目標。年間実績は未監査"
     }
   ],
   "coverage": [
@@ -20212,14 +20212,14 @@
   "workload": [
     {
       "staff_id": "1F-01",
-      "period": "2026-10-05",
-      "work_hours": 31.0,
+      "period": "2026-09-28",
+      "work_hours": 5.0,
       "contract_hours": 40.0
     },
     {
       "staff_id": "1F-01",
-      "period": "2026-09-28",
-      "work_hours": 5.0,
+      "period": "2026-10-05",
+      "work_hours": 31.0,
       "contract_hours": 40.0
     },
     {
@@ -20230,32 +20230,32 @@
     },
     {
       "staff_id": "1F-02",
-      "period": "2026-10-05",
-      "work_hours": 31.0,
-      "contract_hours": 40.0
-    },
-    {
-      "staff_id": "1F-02",
       "period": "2026-09-28",
       "work_hours": 5.0,
       "contract_hours": 40.0
     },
     {
       "staff_id": "1F-02",
-      "period": "2026-10-12",
-      "work_hours": 14.0,
+      "period": "2026-10-05",
+      "work_hours": 31.0,
       "contract_hours": 40.0
     },
     {
-      "staff_id": "1F-03",
-      "period": "2026-10-05",
-      "work_hours": 29.0,
+      "staff_id": "1F-02",
+      "period": "2026-10-12",
+      "work_hours": 14.0,
       "contract_hours": 40.0
     },
     {
       "staff_id": "1F-03",
       "period": "2026-09-28",
       "work_hours": 7.0,
+      "contract_hours": 40.0
+    },
+    {
+      "staff_id": "1F-03",
+      "period": "2026-10-05",
+      "work_hours": 29.0,
       "contract_hours": 40.0
     },
     {
@@ -20266,19 +20266,25 @@
     },
     {
       "staff_id": "1F-04",
-      "period": "2026-10-05",
-      "work_hours": 29.0,
-      "contract_hours": 40.0
-    },
-    {
-      "staff_id": "1F-04",
       "period": "2026-09-28",
       "work_hours": 7.0,
       "contract_hours": 40.0
     },
     {
       "staff_id": "1F-04",
+      "period": "2026-10-05",
+      "work_hours": 29.0,
+      "contract_hours": 40.0
+    },
+    {
+      "staff_id": "1F-04",
       "period": "2026-10-12",
+      "work_hours": 8.0,
+      "contract_hours": 40.0
+    },
+    {
+      "staff_id": "1F-05",
+      "period": "2026-09-28",
       "work_hours": 8.0,
       "contract_hours": 40.0
     },
@@ -20295,7 +20301,7 @@
       "contract_hours": 40.0
     },
     {
-      "staff_id": "1F-05",
+      "staff_id": "1F-06",
       "period": "2026-09-28",
       "work_hours": 8.0,
       "contract_hours": 40.0
@@ -20313,7 +20319,7 @@
       "contract_hours": 40.0
     },
     {
-      "staff_id": "1F-06",
+      "staff_id": "1F-07",
       "period": "2026-09-28",
       "work_hours": 8.0,
       "contract_hours": 40.0
@@ -20331,7 +20337,7 @@
       "contract_hours": 40.0
     },
     {
-      "staff_id": "1F-07",
+      "staff_id": "1F-08",
       "period": "2026-09-28",
       "work_hours": 8.0,
       "contract_hours": 40.0
@@ -20349,7 +20355,7 @@
       "contract_hours": 40.0
     },
     {
-      "staff_id": "1F-08",
+      "staff_id": "1F-09",
       "period": "2026-09-28",
       "work_hours": 8.0,
       "contract_hours": 40.0
@@ -20367,7 +20373,7 @@
       "contract_hours": 40.0
     },
     {
-      "staff_id": "1F-09",
+      "staff_id": "1F-10",
       "period": "2026-09-28",
       "work_hours": 8.0,
       "contract_hours": 40.0
@@ -20376,12 +20382,6 @@
       "staff_id": "1F-10",
       "period": "2026-10-05",
       "work_hours": 27.0,
-      "contract_hours": 40.0
-    },
-    {
-      "staff_id": "1F-10",
-      "period": "2026-09-28",
-      "work_hours": 8.0,
       "contract_hours": 40.0
     },
     {
@@ -20410,14 +20410,14 @@
     },
     {
       "staff_id": "1F-12",
-      "period": "2026-10-05",
-      "work_hours": 30.0,
+      "period": "2026-09-28",
+      "work_hours": 8.0,
       "contract_hours": 40.0
     },
     {
       "staff_id": "1F-12",
-      "period": "2026-09-28",
-      "work_hours": 8.0,
+      "period": "2026-10-05",
+      "work_hours": 30.0,
       "contract_hours": 40.0
     },
     {
@@ -20428,14 +20428,14 @@
     },
     {
       "staff_id": "1F-13",
-      "period": "2026-10-05",
-      "work_hours": 30.0,
+      "period": "2026-09-28",
+      "work_hours": 8.0,
       "contract_hours": 40.0
     },
     {
       "staff_id": "1F-13",
-      "period": "2026-09-28",
-      "work_hours": 8.0,
+      "period": "2026-10-05",
+      "work_hours": 30.0,
       "contract_hours": 40.0
     },
     {
@@ -20485,6 +20485,12 @@
       "period": "2026-10-12",
       "work_hours": 8.0,
       "contract_hours": 40.0
+    },
+    {
+      "staff_id": "1F-23",
+      "period": "2026-09-28",
+      "work_hours": 2.0,
+      "contract_hours": 9.0
     },
     {
       "staff_id": "1F-23",
@@ -20499,18 +20505,66 @@
       "contract_hours": 9.0
     },
     {
-      "staff_id": "1F-23",
-      "period": "2026-09-28",
-      "work_hours": 2.0,
-      "contract_hours": 9.0
-    },
-    {
       "staff_id": "1F-24",
       "period": "2026-10-05",
       "work_hours": 6.0,
       "contract_hours": 9.0
     },
     {
+      "staff_id": "1F-25",
+      "period": "2026-10-05",
+      "work_hours": 20.0,
+      "contract_hours": 40.0
+    },
+    {
+      "staff_id": "1F-25",
+      "period": "2026-10-12",
+      "work_hours": 8.0,
+      "contract_hours": 40.0
+    },
+    {
+      "staff_id": "1F-26",
+      "period": "2026-10-05",
+      "work_hours": 19.0,
+      "contract_hours": 40.0
+    },
+    {
+      "staff_id": "1F-26",
+      "period": "2026-10-12",
+      "work_hours": 1.0,
+      "contract_hours": 40.0
+    },
+    {
+      "staff_id": "1F-27",
+      "period": "2026-10-05",
+      "work_hours": 32.0,
+      "contract_hours": 40.0
+    },
+    {
+      "staff_id": "1F-28",
+      "period": "2026-10-05",
+      "work_hours": 32.0,
+      "contract_hours": 40.0
+    },
+    {
+      "staff_id": "1F-29",
+      "period": "2026-10-05",
+      "work_hours": 32.0,
+      "contract_hours": 40.0
+    },
+    {
+      "staff_id": "1F-30",
+      "period": "2026-10-05",
+      "work_hours": 32.0,
+      "contract_hours": 40.0
+    },
+    {
+      "staff_id": "1F-31",
+      "period": "2026-10-05",
+      "work_hours": 24.0,
+      "contract_hours": 40.0
+    },
+    {
       "staff_id": "2F-01",
       "period": "2026-09-28",
       "work_hours": 6.0,
@@ -20518,14 +20572,14 @@
     },
     {
       "staff_id": "2F-01",
-      "period": "2026-10-12",
-      "work_hours": 8.0,
+      "period": "2026-10-05",
+      "work_hours": 30.0,
       "contract_hours": 40.0
     },
     {
       "staff_id": "2F-01",
-      "period": "2026-10-05",
-      "work_hours": 30.0,
+      "period": "2026-10-12",
+      "work_hours": 8.0,
       "contract_hours": 40.0
     },
     {
@@ -20536,14 +20590,20 @@
     },
     {
       "staff_id": "2F-02",
+      "period": "2026-10-05",
+      "work_hours": 29.0,
+      "contract_hours": 40.0
+    },
+    {
+      "staff_id": "2F-02",
       "period": "2026-10-12",
       "work_hours": 8.0,
       "contract_hours": 40.0
     },
     {
-      "staff_id": "2F-02",
-      "period": "2026-10-05",
-      "work_hours": 29.0,
+      "staff_id": "2F-03",
+      "period": "2026-09-28",
+      "work_hours": 8.0,
       "contract_hours": 40.0
     },
     {
@@ -20559,7 +20619,7 @@
       "contract_hours": 40.0
     },
     {
-      "staff_id": "2F-03",
+      "staff_id": "2F-04",
       "period": "2026-09-28",
       "work_hours": 8.0,
       "contract_hours": 40.0
@@ -20577,7 +20637,7 @@
       "contract_hours": 40.0
     },
     {
-      "staff_id": "2F-04",
+      "staff_id": "2F-05",
       "period": "2026-09-28",
       "work_hours": 8.0,
       "contract_hours": 40.0
@@ -20595,7 +20655,7 @@
       "contract_hours": 40.0
     },
     {
-      "staff_id": "2F-05",
+      "staff_id": "2F-06",
       "period": "2026-09-28",
       "work_hours": 8.0,
       "contract_hours": 40.0
@@ -20613,7 +20673,7 @@
       "contract_hours": 40.0
     },
     {
-      "staff_id": "2F-06",
+      "staff_id": "2F-07",
       "period": "2026-09-28",
       "work_hours": 8.0,
       "contract_hours": 40.0
@@ -20631,7 +20691,7 @@
       "contract_hours": 40.0
     },
     {
-      "staff_id": "2F-07",
+      "staff_id": "2F-08",
       "period": "2026-09-28",
       "work_hours": 8.0,
       "contract_hours": 40.0
@@ -20644,13 +20704,13 @@
     },
     {
       "staff_id": "2F-08",
-      "period": "2026-09-28",
+      "period": "2026-10-12",
       "work_hours": 8.0,
       "contract_hours": 40.0
     },
     {
-      "staff_id": "2F-08",
-      "period": "2026-10-12",
+      "staff_id": "2F-09",
+      "period": "2026-09-28",
       "work_hours": 8.0,
       "contract_hours": 40.0
     },
@@ -20658,12 +20718,6 @@
       "staff_id": "2F-09",
       "period": "2026-10-05",
       "work_hours": 30.0,
-      "contract_hours": 40.0
-    },
-    {
-      "staff_id": "2F-09",
-      "period": "2026-09-28",
-      "work_hours": 8.0,
       "contract_hours": 40.0
     },
     {
@@ -20674,14 +20728,14 @@
     },
     {
       "staff_id": "2F-10",
-      "period": "2026-10-05",
-      "work_hours": 30.0,
+      "period": "2026-09-28",
+      "work_hours": 8.0,
       "contract_hours": 40.0
     },
     {
       "staff_id": "2F-10",
-      "period": "2026-09-28",
-      "work_hours": 8.0,
+      "period": "2026-10-05",
+      "work_hours": 30.0,
       "contract_hours": 40.0
     },
     {
@@ -20692,14 +20746,14 @@
     },
     {
       "staff_id": "2F-11",
-      "period": "2026-10-05",
-      "work_hours": 30.0,
+      "period": "2026-09-28",
+      "work_hours": 8.0,
       "contract_hours": 40.0
     },
     {
       "staff_id": "2F-11",
-      "period": "2026-09-28",
-      "work_hours": 8.0,
+      "period": "2026-10-05",
+      "work_hours": 30.0,
       "contract_hours": 40.0
     },
     {
@@ -20710,14 +20764,14 @@
     },
     {
       "staff_id": "2F-12",
-      "period": "2026-10-05",
-      "work_hours": 30.0,
+      "period": "2026-09-28",
+      "work_hours": 8.0,
       "contract_hours": 40.0
     },
     {
       "staff_id": "2F-12",
-      "period": "2026-09-28",
-      "work_hours": 8.0,
+      "period": "2026-10-05",
+      "work_hours": 30.0,
       "contract_hours": 40.0
     },
     {
@@ -20782,20 +20836,68 @@
     },
     {
       "staff_id": "2F-24",
-      "period": "2026-10-12",
-      "work_hours": 6.0,
-      "contract_hours": 9.0
-    },
-    {
-      "staff_id": "2F-24",
       "period": "2026-10-05",
       "work_hours": 9.0,
       "contract_hours": 9.0
     },
     {
-      "staff_id": "3F-01",
+      "staff_id": "2F-24",
+      "period": "2026-10-12",
+      "work_hours": 6.0,
+      "contract_hours": 9.0
+    },
+    {
+      "staff_id": "2F-25",
       "period": "2026-10-05",
-      "work_hours": 28.0,
+      "work_hours": 32.0,
+      "contract_hours": 40.0
+    },
+    {
+      "staff_id": "2F-26",
+      "period": "2026-10-05",
+      "work_hours": 32.0,
+      "contract_hours": 40.0
+    },
+    {
+      "staff_id": "2F-27",
+      "period": "2026-10-05",
+      "work_hours": 32.0,
+      "contract_hours": 40.0
+    },
+    {
+      "staff_id": "2F-28",
+      "period": "2026-10-05",
+      "work_hours": 32.0,
+      "contract_hours": 40.0
+    },
+    {
+      "staff_id": "2F-29",
+      "period": "2026-10-05",
+      "work_hours": 24.0,
+      "contract_hours": 40.0
+    },
+    {
+      "staff_id": "2F-30",
+      "period": "2026-10-05",
+      "work_hours": 24.0,
+      "contract_hours": 40.0
+    },
+    {
+      "staff_id": "2F-31",
+      "period": "2026-10-05",
+      "work_hours": 24.0,
+      "contract_hours": 40.0
+    },
+    {
+      "staff_id": "2F-32",
+      "period": "2026-10-05",
+      "work_hours": 24.0,
+      "contract_hours": 40.0
+    },
+    {
+      "staff_id": "2F-33",
+      "period": "2026-10-05",
+      "work_hours": 24.0,
       "contract_hours": 40.0
     },
     {
@@ -20806,7 +20908,19 @@
     },
     {
       "staff_id": "3F-01",
+      "period": "2026-10-05",
+      "work_hours": 28.0,
+      "contract_hours": 40.0
+    },
+    {
+      "staff_id": "3F-01",
       "period": "2026-10-12",
+      "work_hours": 7.0,
+      "contract_hours": 40.0
+    },
+    {
+      "staff_id": "3F-02",
+      "period": "2026-09-28",
       "work_hours": 7.0,
       "contract_hours": 40.0
     },
@@ -20818,14 +20932,14 @@
     },
     {
       "staff_id": "3F-02",
-      "period": "2026-09-28",
+      "period": "2026-10-12",
       "work_hours": 7.0,
       "contract_hours": 40.0
     },
     {
-      "staff_id": "3F-02",
-      "period": "2026-10-12",
-      "work_hours": 7.0,
+      "staff_id": "3F-03",
+      "period": "2026-09-28",
+      "work_hours": 8.0,
       "contract_hours": 40.0
     },
     {
@@ -20841,7 +20955,7 @@
       "contract_hours": 40.0
     },
     {
-      "staff_id": "3F-03",
+      "staff_id": "3F-04",
       "period": "2026-09-28",
       "work_hours": 8.0,
       "contract_hours": 40.0
@@ -20859,7 +20973,7 @@
       "contract_hours": 40.0
     },
     {
-      "staff_id": "3F-04",
+      "staff_id": "3F-05",
       "period": "2026-09-28",
       "work_hours": 8.0,
       "contract_hours": 40.0
@@ -20877,7 +20991,7 @@
       "contract_hours": 40.0
     },
     {
-      "staff_id": "3F-05",
+      "staff_id": "3F-06",
       "period": "2026-09-28",
       "work_hours": 8.0,
       "contract_hours": 40.0
@@ -20895,7 +21009,7 @@
       "contract_hours": 40.0
     },
     {
-      "staff_id": "3F-06",
+      "staff_id": "3F-07",
       "period": "2026-09-28",
       "work_hours": 8.0,
       "contract_hours": 40.0
@@ -20913,7 +21027,7 @@
       "contract_hours": 40.0
     },
     {
-      "staff_id": "3F-07",
+      "staff_id": "3F-08",
       "period": "2026-09-28",
       "work_hours": 8.0,
       "contract_hours": 40.0
@@ -20922,12 +21036,6 @@
       "staff_id": "3F-08",
       "period": "2026-10-05",
       "work_hours": 30.0,
-      "contract_hours": 40.0
-    },
-    {
-      "staff_id": "3F-08",
-      "period": "2026-09-28",
-      "work_hours": 8.0,
       "contract_hours": 40.0
     },
     {
@@ -20938,14 +21046,14 @@
     },
     {
       "staff_id": "3F-09",
-      "period": "2026-10-05",
-      "work_hours": 30.0,
+      "period": "2026-09-28",
+      "work_hours": 8.0,
       "contract_hours": 40.0
     },
     {
       "staff_id": "3F-09",
-      "period": "2026-09-28",
-      "work_hours": 8.0,
+      "period": "2026-10-05",
+      "work_hours": 30.0,
       "contract_hours": 40.0
     },
     {
@@ -20956,14 +21064,14 @@
     },
     {
       "staff_id": "3F-10",
-      "period": "2026-10-05",
-      "work_hours": 30.0,
+      "period": "2026-09-28",
+      "work_hours": 8.0,
       "contract_hours": 40.0
     },
     {
       "staff_id": "3F-10",
-      "period": "2026-09-28",
-      "work_hours": 8.0,
+      "period": "2026-10-05",
+      "work_hours": 30.0,
       "contract_hours": 40.0
     },
     {
@@ -20974,14 +21082,14 @@
     },
     {
       "staff_id": "3F-11",
-      "period": "2026-10-05",
-      "work_hours": 30.0,
+      "period": "2026-09-28",
+      "work_hours": 8.0,
       "contract_hours": 40.0
     },
     {
       "staff_id": "3F-11",
-      "period": "2026-09-28",
-      "work_hours": 8.0,
+      "period": "2026-10-05",
+      "work_hours": 30.0,
       "contract_hours": 40.0
     },
     {
@@ -20992,14 +21100,14 @@
     },
     {
       "staff_id": "3F-12",
-      "period": "2026-10-05",
-      "work_hours": 30.0,
+      "period": "2026-09-28",
+      "work_hours": 8.0,
       "contract_hours": 40.0
     },
     {
       "staff_id": "3F-12",
-      "period": "2026-09-28",
-      "work_hours": 8.0,
+      "period": "2026-10-05",
+      "work_hours": 30.0,
       "contract_hours": 40.0
     },
     {
@@ -21081,72 +21189,6 @@
       "contract_hours": 9.0
     },
     {
-      "staff_id": "1F-25",
-      "period": "2026-10-05",
-      "work_hours": 20.0,
-      "contract_hours": 40.0
-    },
-    {
-      "staff_id": "1F-25",
-      "period": "2026-10-12",
-      "work_hours": 8.0,
-      "contract_hours": 40.0
-    },
-    {
-      "staff_id": "1F-26",
-      "period": "2026-10-05",
-      "work_hours": 19.0,
-      "contract_hours": 40.0
-    },
-    {
-      "staff_id": "1F-26",
-      "period": "2026-10-12",
-      "work_hours": 1.0,
-      "contract_hours": 40.0
-    },
-    {
-      "staff_id": "1F-27",
-      "period": "2026-10-05",
-      "work_hours": 32.0,
-      "contract_hours": 40.0
-    },
-    {
-      "staff_id": "1F-28",
-      "period": "2026-10-05",
-      "work_hours": 32.0,
-      "contract_hours": 40.0
-    },
-    {
-      "staff_id": "1F-29",
-      "period": "2026-10-05",
-      "work_hours": 32.0,
-      "contract_hours": 40.0
-    },
-    {
-      "staff_id": "2F-25",
-      "period": "2026-10-05",
-      "work_hours": 32.0,
-      "contract_hours": 40.0
-    },
-    {
-      "staff_id": "2F-26",
-      "period": "2026-10-05",
-      "work_hours": 32.0,
-      "contract_hours": 40.0
-    },
-    {
-      "staff_id": "2F-27",
-      "period": "2026-10-05",
-      "work_hours": 32.0,
-      "contract_hours": 40.0
-    },
-    {
-      "staff_id": "2F-28",
-      "period": "2026-10-05",
-      "work_hours": 32.0,
-      "contract_hours": 40.0
-    },
-    {
       "staff_id": "3F-25",
       "period": "2026-10-05",
       "work_hours": 32.0,
@@ -21183,12 +21225,6 @@
       "contract_hours": 40.0
     },
     {
-      "staff_id": "1F-30",
-      "period": "2026-10-05",
-      "work_hours": 32.0,
-      "contract_hours": 40.0
-    },
-    {
       "staff_id": "3F-31",
       "period": "2026-10-05",
       "work_hours": 32.0,
@@ -21210,36 +21246,6 @@
       "staff_id": "3F-34",
       "period": "2026-10-05",
       "work_hours": 32.0,
-      "contract_hours": 40.0
-    },
-    {
-      "staff_id": "2F-29",
-      "period": "2026-10-05",
-      "work_hours": 24.0,
-      "contract_hours": 40.0
-    },
-    {
-      "staff_id": "2F-30",
-      "period": "2026-10-05",
-      "work_hours": 24.0,
-      "contract_hours": 40.0
-    },
-    {
-      "staff_id": "2F-31",
-      "period": "2026-10-05",
-      "work_hours": 24.0,
-      "contract_hours": 40.0
-    },
-    {
-      "staff_id": "2F-32",
-      "period": "2026-10-05",
-      "work_hours": 24.0,
-      "contract_hours": 40.0
-    },
-    {
-      "staff_id": "2F-33",
-      "period": "2026-10-05",
-      "work_hours": 24.0,
       "contract_hours": 40.0
     },
     {
@@ -21298,12 +21304,6 @@
     },
     {
       "staff_id": "3F-44",
-      "period": "2026-10-05",
-      "work_hours": 24.0,
-      "contract_hours": 40.0
-    },
-    {
-      "staff_id": "1F-31",
       "period": "2026-10-05",
       "work_hours": 24.0,
       "contract_hours": 40.0

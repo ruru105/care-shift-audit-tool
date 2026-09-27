@@ -18,10 +18,14 @@ def load_folder(folder):
     return data
 
 
-def write_csv(path, rows, fields):
+def write_csv(path, rows, fields, labels=None):
+    """labelsを渡すと、見出し行だけをその日本語表記に差し替える。内部のキー(fields)は変えない。"""
     with Path(path).open("w", encoding="utf-8-sig", newline="") as stream:
         writer = csv.DictWriter(stream, fieldnames=fields, extrasaction="ignore")
-        writer.writeheader()
+        if labels:
+            writer.writerow({f: labels.get(f, f) for f in fields})
+        else:
+            writer.writeheader()
         for row in rows:
             # Excelに読み込む文字列を数式として実行させない。
             clean = {k:("'"+v if isinstance(v,str) and v.startswith(("=","+","-","@")) else v) for k,v in row.items()}
