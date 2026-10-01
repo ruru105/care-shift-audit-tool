@@ -60,7 +60,7 @@ UNDERSTAFFED_EXPECTED = {
 
 @pytest.mark.parametrize('month', sorted(UNDERSTAFFED_EXPECTED))
 def test_understaffed_series_shows_real_shortage_without_added_staff(month):
-    """72人だけ・増員なしで6か月を組むと、月ごとに実際にどれだけ手薄かを確認する(2026-09-26 陽司さんとの合意事項)。
+    """72人だけ・増員なしで6か月を組むと、月ごとに実際にどれだけ手薄かを確認する(2026-09-26 に決めた方針)。
     数値は既知の生成結果を固定したもの。tests/build_understaffed_series.pyを変えたら意図的な変化か確認すること。"""
     data=load_folder(ROOT/f'data/understaffed_{month}')
     assert len(data['staff'])==72
