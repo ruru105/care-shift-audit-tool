@@ -3,7 +3,7 @@ import argparse
 import sys
 from pathlib import Path
 from .io import load_excel, load_folder
-from .output import export_report, LABELS
+from .output import export_report, write_stop_report, LABELS
 
 
 def main():
@@ -21,6 +21,11 @@ def main():
         result = export_report(data,args.out,args.formal)
     except (ValueError, KeyError, TypeError, OSError) as exc:
         print(f'処理停止: {exc}',file=sys.stderr)
+        # 前回のreport.htmlが最新の結果のように残らないよう、今回の停止理由を書き込む。
+        try:
+            write_stop_report(args.out,exc)
+        except OSError:
+            pass
         return 2
     print(f"{LABELS[result['status']]} | 重大NG {result['counts'].get('RED',0)}件 | 要確認 {result['counts'].get('YELLOW',0)}件")
     print(f'結果: {args.out / "report.html"}')

@@ -6,7 +6,8 @@ import random
 import pytest
 from care_shift_audit.engine import audit, legal_break_minutes, leave_findings, overtime_findings, distribution_status
 from care_shift_audit.io import load_folder
-from care_shift_audit.output import export_report
+from care_shift_audit.output import export_report, staff_rows
+from care_shift_audit.__main__ import main as cli_main
 from cases import CASES, make_case
 
 ROOT=Path(__file__).resolve().parents[1]
@@ -282,3 +283,73 @@ def test_csv_headers_are_japanese(baseline,tmp_path):
     with (tmp_path/'staff_draft.csv').open(encoding='utf-8-sig') as f:
         header=next(csv.reader(f))
     assert header==['日付','曜日','職員ID','氏名','勤務コード','時間','状態']
+
+
+# ---- 入力エラーがあっても、レポートが途中で止まらないこと ----
+
+def _with_unknown_staff_in_period(baseline):
+    """監査期間内の勤務入力1行の職員IDを、マスタにないIDへ変えたデータを返す。"""
+    data = deepcopy(baseline)
+    start, end = data['config']['start'][:10], data['config']['end'][:10]
+    for row in data['schedule']:
+        if start <= row['date'] < end:
+            row['staff_id'] = 'UNKNOWN'
+            return data
+    raise AssertionError('期間内の勤務入力がありません')
+
+
+def test_unknown_staff_id_still_produces_report_with_red_status(baseline, tmp_path):
+    data = _with_unknown_staff_in_period(baseline)
+
+    result = export_report(data, tmp_path)
+
+    assert result['status'] == 'RED'
+    assert any(issue['code'] == 'INPUT_INVALID' for issue in result['issues'])
+    html_text = (tmp_path/'report.html').read_text(encoding='utf-8')
+    assert '配布不可' in html_text
+    assert '除外した行: 1件' in html_text
+    assert 'UNKNOWN' in html_text  # 理由の表に、問題の職員IDが出る
+
+
+def test_unknown_staff_row_is_excluded_from_staff_draft(baseline, tmp_path):
+    data = _with_unknown_staff_in_period(baseline)
+
+    rows = staff_rows(data, 'RED')
+    normal_rows = staff_rows(baseline, 'YELLOW')
+
+    assert len(rows) == len(normal_rows) - 1
+    assert all(row['staff_id'] != 'UNKNOWN' for row in rows)
+
+
+def test_unknown_staff_never_produces_formal_csv(baseline, tmp_path):
+    data = _with_unknown_staff_in_period(baseline)
+
+    with pytest.raises(ValueError):
+        export_report(data, tmp_path, formal=True)
+
+    assert not (tmp_path/'staff_formal.csv').exists()
+
+
+def test_stopped_run_replaces_stale_report_with_stop_reason(tmp_path, capsys, monkeypatch):
+    out = tmp_path/'out'
+    out.mkdir()
+    (out/'report.html').write_text('<html>前回の正常なレポート</html>', encoding='utf-8')
+    missing_input = tmp_path/'no_such_folder'
+    monkeypatch.setattr('sys.argv', ['care_shift_audit', str(missing_input), '--out', str(out)])
+
+    code = cli_main()
+
+    assert code == 2
+    assert '処理停止' in capsys.readouterr().err
+    html_text = (out/'report.html').read_text(encoding='utf-8')
+    assert '前回の正常なレポート' not in html_text
+    assert '処理停止' in html_text
+    assert '配布に使わないでください' in html_text
+
+
+def test_stop_reason_is_html_escaped(tmp_path):
+    from care_shift_audit.output import write_stop_report
+    write_stop_report(tmp_path, '<script>alert(1)</script>')
+    html_text = (tmp_path/'report.html').read_text(encoding='utf-8')
+    assert '<script>alert' not in html_text
+    assert '&lt;script&gt;' in html_text
