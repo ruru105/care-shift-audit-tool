@@ -49,13 +49,15 @@ def test_one_month_example_actually_spans_calendar_month(one_month):
     assert days=={f'2026-10-{d:02d}' for d in range(1,32)}
 
 
+# YELLOWは、目標人数に届かない警告(EARLY/LATE_BELOW_TARGET)を加えた数。
+# 加える前の数は 53・53・53・41・5・5 で、差(10・8・7・8・6・8)は別の集計方法で数えた件数と一致することを確認済み。REDは変わっていない。
 UNDERSTAFFED_EXPECTED = {
-    '2026_10': dict(RED=1764, YELLOW=53, slots=5952),
-    '2026_11': dict(RED=3270, YELLOW=53, slots=5760),
-    '2026_12': dict(RED=3303, YELLOW=53, slots=5952),
-    '2027_01': dict(RED=3366, YELLOW=41, slots=5952),
-    '2027_02': dict(RED=3018, YELLOW=5, slots=5376),
-    '2027_03': dict(RED=3292, YELLOW=5, slots=5952),
+    '2026_10': dict(RED=1764, YELLOW=63, slots=5952),
+    '2026_11': dict(RED=3270, YELLOW=61, slots=5760),
+    '2026_12': dict(RED=3303, YELLOW=60, slots=5952),
+    '2027_01': dict(RED=3366, YELLOW=49, slots=5952),
+    '2027_02': dict(RED=3018, YELLOW=11, slots=5376),
+    '2027_03': dict(RED=3292, YELLOW=13, slots=5952),
 }
 
 
@@ -476,3 +478,87 @@ def test_early_code_not_required_when_minimum_is_zero(baseline):
     data['config']['late_shift_code']='L'
     messages=[x['message'] for x in audit(data)['issues'] if x['code']=='INPUT_INVALID']
     assert not any('early_shift_code' in m for m in messages)
+
+
+# ---- 目標人数(early_target・late_target)に届かない警告 ----
+
+def _remove_shift(data, code, day, floor, how_many):
+    """指定した日・フロアの勤務(早・遅など)を、先頭から how_many 件取り除く。"""
+    floors={row['staff_id']:row['floor'] for row in data['staff']}
+    targets=[r for r in data['schedule']
+             if r['code']==code and r['date']==day and (r.get('floor') or floors[r['staff_id']])==floor][:how_many]
+    assert len(targets)==how_many
+    for row in targets:
+        data['schedule'].remove(row)
+    return data
+
+
+def _issues(result, *codes):
+    return [x for x in result['issues'] if x['code'] in codes]
+
+
+def test_baseline_meets_targets_so_no_below_target_warning(baseline):
+    result=audit(baseline)
+    assert not _issues(result,'EARLY_BELOW_TARGET','LATE_BELOW_TARGET')
+    assert result['counts']['YELLOW']==5
+
+
+def _without_targets(data):
+    data=deepcopy(data)
+    del data['config']['early_target'];del data['config']['late_target']
+    return data
+
+
+def test_one_below_target_is_yellow_not_red(baseline):
+    """最低人数(4)は満たすが目標(5)に届かないときは、重大NGではなく要確認の警告になる。
+    1人外すと配置の人数も変わるため、同じ入力を「目標人数の設定なし」で監査した結果と比べて、警告の分だけが増えることを確認する。"""
+    modified=_remove_shift(deepcopy(baseline),'早','2026-10-06','1F',1)
+    result=audit(modified)
+    control=audit(_without_targets(modified))
+    warnings=_issues(result,'EARLY_BELOW_TARGET')
+    assert len(warnings)==1
+    assert (warnings[0]['severity'],warnings[0]['floor'],warnings[0]['when'])==('YELLOW','1F','2026-10-06')
+    assert '4人' in warnings[0]['message'] and '目標5人' in warnings[0]['message']
+    assert not _issues(result,'EARLY_SHORT')
+    assert result['counts'].get('RED',0)==control['counts'].get('RED',0)
+    assert result['counts']['YELLOW']==control['counts']['YELLOW']+1
+    assert result['status']==control['status']
+
+
+def test_below_minimum_is_red_and_not_also_below_target(baseline):
+    """最低人数を割ったときは従来どおりの重大NGだけ。同じ日・フロアに目標未達の警告を重ねない。"""
+    result=audit(_remove_shift(deepcopy(baseline),'早','2026-10-06','1F',2))
+    assert len(_issues(result,'EARLY_SHORT'))==1
+    assert not [x for x in _issues(result,'EARLY_BELOW_TARGET') if x['when']=='2026-10-06' and x['floor']=='1F']
+
+
+def test_late_shift_below_target_is_reported_separately(baseline):
+    result=audit(_remove_shift(deepcopy(baseline),'遅','2026-10-07','2F',1))
+    warnings=_issues(result,'LATE_BELOW_TARGET')
+    assert len(warnings)==1 and warnings[0]['floor']=='2F' and warnings[0]['severity']=='YELLOW'
+    assert not _issues(result,'EARLY_BELOW_TARGET')
+
+
+def test_no_target_setting_means_no_below_target_warning(baseline):
+    modified=_remove_shift(deepcopy(baseline),'早','2026-10-06','1F',1)
+    result=audit(_without_targets(modified))
+    assert not _issues(result,'EARLY_BELOW_TARGET','LATE_BELOW_TARGET')
+
+
+def test_target_equal_to_minimum_never_warns(baseline):
+    data=deepcopy(baseline);data['config']['early_target']=4
+    result=audit(_remove_shift(data,'早','2026-10-06','1F',1))
+    assert not _issues(result,'EARLY_BELOW_TARGET')
+
+
+def test_below_target_warning_works_with_renamed_shift_code(baseline):
+    result=audit(_remove_shift(_with_renamed_early_late(baseline),'E','2026-10-06','1F',1))
+    assert len(_issues(result,'EARLY_BELOW_TARGET'))==1
+
+
+@pytest.mark.parametrize('key,value',[('early_target',3),('late_target',3),('early_target','5'),
+                                       ('late_target',True),('early_target',-1),('late_target',4.5)])
+def test_invalid_target_is_input_invalid(baseline,key,value):
+    data=deepcopy(baseline);data['config'][key]=value
+    invalid=_issues(audit(data),'INPUT_INVALID')
+    assert invalid and key in invalid[0]['message']

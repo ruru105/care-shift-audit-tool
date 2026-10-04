@@ -135,6 +135,13 @@ def check_facility_settings(config, has_leave_rows):
     for key in ["day_min", "night_min", "early_min", "late_min", "free_supervisor_min"]:
         if not is_whole_number(config[key]):
             raise ValueError(f"人数設定 {key} が不正(0以上の整数で指定してください)")
+    # 目標人数(early_target・late_target)は任意。指定するなら0以上の整数で、最低人数以上にする。
+    for target_key, minimum_key in (("early_target", "early_min"), ("late_target", "late_min")):
+        if target_key in config:
+            if not is_whole_number(config[target_key]):
+                raise ValueError(f"人数設定 {target_key} が不正(0以上の整数で指定してください)")
+            if config[target_key] < config[minimum_key]:
+                raise ValueError(f"人数設定 {target_key} が不正(最低人数 {minimum_key} 以上にしてください)")
     for key in ["night_continuous_minutes", "night_supervisors", "annual_holidays"]:
         if key not in config or not is_whole_number(config[key]):
             raise ValueError(f"施設設定 {key} が不正(0以上の整数で指定してください)")
@@ -394,10 +401,15 @@ def audit(data):
         if datetime.combine(day, day_start) >= end:
             continue
         for floor in floors:
-            for code, limit in [(EARLY_CODE,config["early_min"]),(LATE_CODE,config["late_min"])]:
+            for code, limit, target_key in [(EARLY_CODE,config["early_min"],"early_target"),(LATE_CODE,config["late_min"],"late_target")]:
                 count = sum(a["date"]==day and a["code"]==code and a["floor"]==floor for a in assignments)
                 if count < limit:
                     flag("EARLY_SHORT" if code==EARLY_CODE else "LATE_SHORT", f"{code}番 {count}/{limit}人", when=day, floor=floor)
+                elif target_key in config and count < config[target_key]:
+                    # 最低人数は満たすが、目標人数には届かない。最低人数の不足(重大NG)とは別の、要確認の警告。
+                    flag("EARLY_BELOW_TARGET" if code==EARLY_CODE else "LATE_BELOW_TARGET",
+                         f"{code}番 {count}人(最低{limit}人は満たしているが、目標{config[target_key]}人に未達)",
+                         when=day, floor=floor, severity="YELLOW", category="目標人数")
         night_rows = [a for a in assignments if a["date"]==day and shifts[a["code"]].get("night")]
         if sum(a["floor"]==SUPERVISOR for a in night_rows) < config["night_supervisors"]:
             flag("NIGHT_SUPERVISOR_SHIFT", "夜勤統括の開始人数不足", when=day, floor=SUPERVISOR)

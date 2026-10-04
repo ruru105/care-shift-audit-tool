@@ -47,6 +47,60 @@
       "message": "年間公休120日は施設目標。年間実績は未監査"
     },
     {
+      "severity": "YELLOW",
+      "code": "EARLY_BELOW_TARGET",
+      "category": "目標人数",
+      "staff_id": "",
+      "when": "2026-10-05",
+      "floor": "1F",
+      "message": "早番 4人(最低4人は満たしているが、目標5人に未達)"
+    },
+    {
+      "severity": "YELLOW",
+      "code": "LATE_BELOW_TARGET",
+      "category": "目標人数",
+      "staff_id": "",
+      "when": "2026-10-05",
+      "floor": "1F",
+      "message": "遅番 4人(最低4人は満たしているが、目標5人に未達)"
+    },
+    {
+      "severity": "YELLOW",
+      "code": "EARLY_BELOW_TARGET",
+      "category": "目標人数",
+      "staff_id": "",
+      "when": "2026-10-05",
+      "floor": "2F",
+      "message": "早番 4人(最低4人は満たしているが、目標5人に未達)"
+    },
+    {
+      "severity": "YELLOW",
+      "code": "LATE_BELOW_TARGET",
+      "category": "目標人数",
+      "staff_id": "",
+      "when": "2026-10-05",
+      "floor": "2F",
+      "message": "遅番 4人(最低4人は満たしているが、目標5人に未達)"
+    },
+    {
+      "severity": "YELLOW",
+      "code": "EARLY_BELOW_TARGET",
+      "category": "目標人数",
+      "staff_id": "",
+      "when": "2026-10-05",
+      "floor": "3F",
+      "message": "早番 4人(最低4人は満たしているが、目標5人に未達)"
+    },
+    {
+      "severity": "YELLOW",
+      "code": "LATE_BELOW_TARGET",
+      "category": "目標人数",
+      "staff_id": "",
+      "when": "2026-10-05",
+      "floor": "3F",
+      "message": "遅番 4人(最低4人は満たしているが、目標5人に未達)"
+    },
+    {
       "severity": "RED",
       "code": "EARLY_SHORT",
       "category": "施設ルール",
@@ -54,6 +108,105 @@
       "when": "2026-10-06",
       "floor": "1F",
       "message": "早番 3/4人"
+    },
+    {
+      "severity": "YELLOW",
+      "code": "LATE_BELOW_TARGET",
+      "category": "目標人数",
+      "staff_id": "",
+      "when": "2026-10-06",
+      "floor": "1F",
+      "message": "遅番 4人(最低4人は満たしているが、目標5人に未達)"
+    },
+    {
+      "severity": "YELLOW",
+      "code": "EARLY_BELOW_TARGET",
+      "category": "目標人数",
+      "staff_id": "",
+      "when": "2026-10-06",
+      "floor": "2F",
+      "message": "早番 4人(最低4人は満たしているが、目標5人に未達)"
+    },
+    {
+      "severity": "YELLOW",
+      "code": "LATE_BELOW_TARGET",
+      "category": "目標人数",
+      "staff_id": "",
+      "when": "2026-10-06",
+      "floor": "2F",
+      "message": "遅番 4人(最低4人は満たしているが、目標5人に未達)"
+    },
+    {
+      "severity": "YELLOW",
+      "code": "EARLY_BELOW_TARGET",
+      "category": "目標人数",
+      "staff_id": "",
+      "when": "2026-10-06",
+      "floor": "3F",
+      "message": "早番 4人(最低4人は満たしているが、目標5人に未達)"
+    },
+    {
+      "severity": "YELLOW",
+      "code": "LATE_BELOW_TARGET",
+      "category": "目標人数",
+      "staff_id": "",
+      "when": "2026-10-06",
+      "floor": "3F",
+      "message": "遅番 4人(最低4人は満たしているが、目標5人に未達)"
+    },
+    {
+      "severity": "YELLOW",
+      "code": "EARLY_BELOW_TARGET",
+      "category": "目標人数",
+      "staff_id": "",
+      "when": "2026-10-07",
+      "floor": "1F",
+      "message": "早番 4人(最低4人は満たしているが、目標5人に未達)"
+    },
+    {
+      "severity": "YELLOW",
+      "code": "LATE_BELOW_TARGET",
+      "category": "目標人数",
+      "staff_id": "",
+      "when": "2026-10-07",
+      "floor": "1F",
+      "message": "遅番 4人(最低4人は満たしているが、目標5人に未達)"
+    },
+    {
+      "severity": "YELLOW",
+      "code": "EARLY_BELOW_TARGET",
+      "category": "目標人数",
+      "staff_id": "",
+      "when": "2026-10-07",
+      "floor": "2F",
+      "message": "早番 4人(最低4人は満たしているが、目標5人に未達)"
+    },
+    {
+      "severity": "YELLOW",
+      "code": "LATE_BELOW_TARGET",
+      "category": "目標人数",
+      "staff_id": "",
+      "when": "2026-10-07",
+      "floor": "2F",
+      "message": "遅番 4人(最低4人は満たしているが、目標5人に未達)"
+    },
+    {
+      "severity": "YELLOW",
+      "code": "EARLY_BELOW_TARGET",
+      "category": "目標人数",
+      "staff_id": "",
+      "when": "2026-10-07",
+      "floor": "3F",
+      "message": "早番 4人(最低4人は満たしているが、目標5人に未達)"
+    },
+    {
+      "severity": "YELLOW",
+      "code": "LATE_BELOW_TARGET",
+      "category": "目標人数",
+      "staff_id": "",
+      "when": "2026-10-07",
+      "floor": "3F",
+      "message": "遅番 4人(最低4人は満たしているが、目標5人に未達)"
     },
     {
       "severity": "RED",
@@ -74,6 +227,15 @@
       "message": "実働0人・最低1人・不足1人"
     },
     {
+      "severity": "YELLOW",
+      "code": "EARLY_BELOW_TARGET",
+      "category": "目標人数",
+      "staff_id": "",
+      "when": "2026-10-08",
+      "floor": "1F",
+      "message": "早番 4人(最低4人は満たしているが、目標5人に未達)"
+    },
+    {
       "severity": "RED",
       "code": "LATE_SHORT",
       "category": "施設ルール",
@@ -81,6 +243,195 @@
       "when": "2026-10-08",
       "floor": "1F",
       "message": "遅番 3/4人"
+    },
+    {
+      "severity": "YELLOW",
+      "code": "EARLY_BELOW_TARGET",
+      "category": "目標人数",
+      "staff_id": "",
+      "when": "2026-10-08",
+      "floor": "2F",
+      "message": "早番 4人(最低4人は満たしているが、目標5人に未達)"
+    },
+    {
+      "severity": "YELLOW",
+      "code": "LATE_BELOW_TARGET",
+      "category": "目標人数",
+      "staff_id": "",
+      "when": "2026-10-08",
+      "floor": "2F",
+      "message": "遅番 4人(最低4人は満たしているが、目標5人に未達)"
+    },
+    {
+      "severity": "YELLOW",
+      "code": "EARLY_BELOW_TARGET",
+      "category": "目標人数",
+      "staff_id": "",
+      "when": "2026-10-08",
+      "floor": "3F",
+      "message": "早番 4人(最低4人は満たしているが、目標5人に未達)"
+    },
+    {
+      "severity": "YELLOW",
+      "code": "LATE_BELOW_TARGET",
+      "category": "目標人数",
+      "staff_id": "",
+      "when": "2026-10-08",
+      "floor": "3F",
+      "message": "遅番 4人(最低4人は満たしているが、目標5人に未達)"
+    },
+    {
+      "severity": "YELLOW",
+      "code": "EARLY_BELOW_TARGET",
+      "category": "目標人数",
+      "staff_id": "",
+      "when": "2026-10-09",
+      "floor": "1F",
+      "message": "早番 4人(最低4人は満たしているが、目標5人に未達)"
+    },
+    {
+      "severity": "YELLOW",
+      "code": "LATE_BELOW_TARGET",
+      "category": "目標人数",
+      "staff_id": "",
+      "when": "2026-10-09",
+      "floor": "1F",
+      "message": "遅番 4人(最低4人は満たしているが、目標5人に未達)"
+    },
+    {
+      "severity": "YELLOW",
+      "code": "EARLY_BELOW_TARGET",
+      "category": "目標人数",
+      "staff_id": "",
+      "when": "2026-10-09",
+      "floor": "2F",
+      "message": "早番 4人(最低4人は満たしているが、目標5人に未達)"
+    },
+    {
+      "severity": "YELLOW",
+      "code": "LATE_BELOW_TARGET",
+      "category": "目標人数",
+      "staff_id": "",
+      "when": "2026-10-09",
+      "floor": "2F",
+      "message": "遅番 4人(最低4人は満たしているが、目標5人に未達)"
+    },
+    {
+      "severity": "YELLOW",
+      "code": "EARLY_BELOW_TARGET",
+      "category": "目標人数",
+      "staff_id": "",
+      "when": "2026-10-09",
+      "floor": "3F",
+      "message": "早番 4人(最低4人は満たしているが、目標5人に未達)"
+    },
+    {
+      "severity": "YELLOW",
+      "code": "LATE_BELOW_TARGET",
+      "category": "目標人数",
+      "staff_id": "",
+      "when": "2026-10-09",
+      "floor": "3F",
+      "message": "遅番 4人(最低4人は満たしているが、目標5人に未達)"
+    },
+    {
+      "severity": "YELLOW",
+      "code": "EARLY_BELOW_TARGET",
+      "category": "目標人数",
+      "staff_id": "",
+      "when": "2026-10-10",
+      "floor": "1F",
+      "message": "早番 4人(最低4人は満たしているが、目標5人に未達)"
+    },
+    {
+      "severity": "YELLOW",
+      "code": "LATE_BELOW_TARGET",
+      "category": "目標人数",
+      "staff_id": "",
+      "when": "2026-10-10",
+      "floor": "1F",
+      "message": "遅番 4人(最低4人は満たしているが、目標5人に未達)"
+    },
+    {
+      "severity": "YELLOW",
+      "code": "LATE_BELOW_TARGET",
+      "category": "目標人数",
+      "staff_id": "",
+      "when": "2026-10-10",
+      "floor": "2F",
+      "message": "遅番 4人(最低4人は満たしているが、目標5人に未達)"
+    },
+    {
+      "severity": "YELLOW",
+      "code": "EARLY_BELOW_TARGET",
+      "category": "目標人数",
+      "staff_id": "",
+      "when": "2026-10-10",
+      "floor": "3F",
+      "message": "早番 4人(最低4人は満たしているが、目標5人に未達)"
+    },
+    {
+      "severity": "YELLOW",
+      "code": "LATE_BELOW_TARGET",
+      "category": "目標人数",
+      "staff_id": "",
+      "when": "2026-10-10",
+      "floor": "3F",
+      "message": "遅番 4人(最低4人は満たしているが、目標5人に未達)"
+    },
+    {
+      "severity": "YELLOW",
+      "code": "EARLY_BELOW_TARGET",
+      "category": "目標人数",
+      "staff_id": "",
+      "when": "2026-10-11",
+      "floor": "1F",
+      "message": "早番 4人(最低4人は満たしているが、目標5人に未達)"
+    },
+    {
+      "severity": "YELLOW",
+      "code": "LATE_BELOW_TARGET",
+      "category": "目標人数",
+      "staff_id": "",
+      "when": "2026-10-11",
+      "floor": "1F",
+      "message": "遅番 4人(最低4人は満たしているが、目標5人に未達)"
+    },
+    {
+      "severity": "YELLOW",
+      "code": "EARLY_BELOW_TARGET",
+      "category": "目標人数",
+      "staff_id": "",
+      "when": "2026-10-11",
+      "floor": "2F",
+      "message": "早番 4人(最低4人は満たしているが、目標5人に未達)"
+    },
+    {
+      "severity": "YELLOW",
+      "code": "LATE_BELOW_TARGET",
+      "category": "目標人数",
+      "staff_id": "",
+      "when": "2026-10-11",
+      "floor": "2F",
+      "message": "遅番 4人(最低4人は満たしているが、目標5人に未達)"
+    },
+    {
+      "severity": "YELLOW",
+      "code": "EARLY_BELOW_TARGET",
+      "category": "目標人数",
+      "staff_id": "",
+      "when": "2026-10-11",
+      "floor": "3F",
+      "message": "早番 4人(最低4人は満たしているが、目標5人に未達)"
+    },
+    {
+      "severity": "YELLOW",
+      "code": "LATE_BELOW_TARGET",
+      "category": "目標人数",
+      "staff_id": "",
+      "when": "2026-10-11",
+      "floor": "3F",
+      "message": "遅番 4人(最低4人は満たしているが、目標5人に未達)"
     },
     {
       "severity": "RED",
@@ -25959,6 +26310,6 @@
   "input_sha256": "f762a594ef36085a44ad59ee04fa0f561300e21b717379c197c9ed8a85aea2c3",
   "counts": {
     "RED": 524,
-    "YELLOW": 52
+    "YELLOW": 91
   }
 }

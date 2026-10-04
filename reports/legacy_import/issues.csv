@@ -4,10 +4,49 @@ YELLOW,LEAVE_HISTORY_REVIEW,未確認・V1制約,,,,全員の年休付与・残�
 YELLOW,MONTH_BOUNDARY_REVIEW,未確認・V1制約,,,,前後月を含む完全な勤務・休暇履歴の監査が未完了
 YELLOW,WORK_SYSTEM_REVIEW,未確認・V1制約,,,,変形労働時間制の手続・事前特定・日週月の時間外計算と36協定は個別審査が必要
 YELLOW,YEAR_HOLIDAY_REVIEW,未確認・V1制約,,,,年間公休120日は施設目標。年間実績は未監査
+YELLOW,EARLY_BELOW_TARGET,目標人数,,2026-10-05,1F,早番 4人(最低4人は満たしているが、目標5人に未達)
+YELLOW,LATE_BELOW_TARGET,目標人数,,2026-10-05,1F,遅番 4人(最低4人は満たしているが、目標5人に未達)
+YELLOW,EARLY_BELOW_TARGET,目標人数,,2026-10-05,2F,早番 4人(最低4人は満たしているが、目標5人に未達)
+YELLOW,LATE_BELOW_TARGET,目標人数,,2026-10-05,2F,遅番 4人(最低4人は満たしているが、目標5人に未達)
+YELLOW,EARLY_BELOW_TARGET,目標人数,,2026-10-05,3F,早番 4人(最低4人は満たしているが、目標5人に未達)
+YELLOW,LATE_BELOW_TARGET,目標人数,,2026-10-05,3F,遅番 4人(最低4人は満たしているが、目標5人に未達)
 RED,EARLY_SHORT,施設ルール,,2026-10-06,1F,早番 3/4人
+YELLOW,LATE_BELOW_TARGET,目標人数,,2026-10-06,1F,遅番 4人(最低4人は満たしているが、目標5人に未達)
+YELLOW,EARLY_BELOW_TARGET,目標人数,,2026-10-06,2F,早番 4人(最低4人は満たしているが、目標5人に未達)
+YELLOW,LATE_BELOW_TARGET,目標人数,,2026-10-06,2F,遅番 4人(最低4人は満たしているが、目標5人に未達)
+YELLOW,EARLY_BELOW_TARGET,目標人数,,2026-10-06,3F,早番 4人(最低4人は満たしているが、目標5人に未達)
+YELLOW,LATE_BELOW_TARGET,目標人数,,2026-10-06,3F,遅番 4人(最低4人は満たしているが、目標5人に未達)
+YELLOW,EARLY_BELOW_TARGET,目標人数,,2026-10-07,1F,早番 4人(最低4人は満たしているが、目標5人に未達)
+YELLOW,LATE_BELOW_TARGET,目標人数,,2026-10-07,1F,遅番 4人(最低4人は満たしているが、目標5人に未達)
+YELLOW,EARLY_BELOW_TARGET,目標人数,,2026-10-07,2F,早番 4人(最低4人は満たしているが、目標5人に未達)
+YELLOW,LATE_BELOW_TARGET,目標人数,,2026-10-07,2F,遅番 4人(最低4人は満たしているが、目標5人に未達)
+YELLOW,EARLY_BELOW_TARGET,目標人数,,2026-10-07,3F,早番 4人(最低4人は満たしているが、目標5人に未達)
+YELLOW,LATE_BELOW_TARGET,目標人数,,2026-10-07,3F,遅番 4人(最低4人は満たしているが、目標5人に未達)
 RED,COVERAGE_SHORT,施設ルール,,2026-10-07 21:00:00,統括,実働0人・最低1人・不足1人
 RED,COVERAGE_SHORT,施設ルール,,2026-10-07 21:30:00,統括,実働0人・最低1人・不足1人
+YELLOW,EARLY_BELOW_TARGET,目標人数,,2026-10-08,1F,早番 4人(最低4人は満たしているが、目標5人に未達)
 RED,LATE_SHORT,施設ルール,,2026-10-08,1F,遅番 3/4人
+YELLOW,EARLY_BELOW_TARGET,目標人数,,2026-10-08,2F,早番 4人(最低4人は満たしているが、目標5人に未達)
+YELLOW,LATE_BELOW_TARGET,目標人数,,2026-10-08,2F,遅番 4人(最低4人は満たしているが、目標5人に未達)
+YELLOW,EARLY_BELOW_TARGET,目標人数,,2026-10-08,3F,早番 4人(最低4人は満たしているが、目標5人に未達)
+YELLOW,LATE_BELOW_TARGET,目標人数,,2026-10-08,3F,遅番 4人(最低4人は満たしているが、目標5人に未達)
+YELLOW,EARLY_BELOW_TARGET,目標人数,,2026-10-09,1F,早番 4人(最低4人は満たしているが、目標5人に未達)
+YELLOW,LATE_BELOW_TARGET,目標人数,,2026-10-09,1F,遅番 4人(最低4人は満たしているが、目標5人に未達)
+YELLOW,EARLY_BELOW_TARGET,目標人数,,2026-10-09,2F,早番 4人(最低4人は満たしているが、目標5人に未達)
+YELLOW,LATE_BELOW_TARGET,目標人数,,2026-10-09,2F,遅番 4人(最低4人は満たしているが、目標5人に未達)
+YELLOW,EARLY_BELOW_TARGET,目標人数,,2026-10-09,3F,早番 4人(最低4人は満たしているが、目標5人に未達)
+YELLOW,LATE_BELOW_TARGET,目標人数,,2026-10-09,3F,遅番 4人(最低4人は満たしているが、目標5人に未達)
+YELLOW,EARLY_BELOW_TARGET,目標人数,,2026-10-10,1F,早番 4人(最低4人は満たしているが、目標5人に未達)
+YELLOW,LATE_BELOW_TARGET,目標人数,,2026-10-10,1F,遅番 4人(最低4人は満たしているが、目標5人に未達)
+YELLOW,LATE_BELOW_TARGET,目標人数,,2026-10-10,2F,遅番 4人(最低4人は満たしているが、目標5人に未達)
+YELLOW,EARLY_BELOW_TARGET,目標人数,,2026-10-10,3F,早番 4人(最低4人は満たしているが、目標5人に未達)
+YELLOW,LATE_BELOW_TARGET,目標人数,,2026-10-10,3F,遅番 4人(最低4人は満たしているが、目標5人に未達)
+YELLOW,EARLY_BELOW_TARGET,目標人数,,2026-10-11,1F,早番 4人(最低4人は満たしているが、目標5人に未達)
+YELLOW,LATE_BELOW_TARGET,目標人数,,2026-10-11,1F,遅番 4人(最低4人は満たしているが、目標5人に未達)
+YELLOW,EARLY_BELOW_TARGET,目標人数,,2026-10-11,2F,早番 4人(最低4人は満たしているが、目標5人に未達)
+YELLOW,LATE_BELOW_TARGET,目標人数,,2026-10-11,2F,遅番 4人(最低4人は満たしているが、目標5人に未達)
+YELLOW,EARLY_BELOW_TARGET,目標人数,,2026-10-11,3F,早番 4人(最低4人は満たしているが、目標5人に未達)
+YELLOW,LATE_BELOW_TARGET,目標人数,,2026-10-11,3F,遅番 4人(最低4人は満たしているが、目標5人に未達)
 RED,FACILITY_BREAK_SHORT,施設ルール,1F-01,2026-10-04,,施設休憩不足: 0/180分
 RED,LEGAL_BREAK_SHORT,法令,1F-01,2026-10-04,,法定休憩不足: 0分
 RED,NIGHT_BREAK_CONTINUITY,施設ルール,1F-01,2026-10-04,,夜勤の連続休憩が不足
