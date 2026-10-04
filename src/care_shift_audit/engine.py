@@ -13,6 +13,8 @@ DEFAULT_SUPERVISOR_CODE = "統"
 DEFAULT_OFF_CODE = "休"
 DEFAULT_POST_NIGHT_CODE = "明"
 DEFAULT_PAID_LEAVE_CODE = "有"
+DEFAULT_EARLY_CODE = "早"
+DEFAULT_LATE_CODE = "遅"
 DEFAULT_WEEK_START_WEEKDAY = 0  # 0=月曜(Python標準のweekday()に合わせる)
 
 
@@ -158,6 +160,8 @@ def audit(data):
     OFF_CODE = config.get("off_code", DEFAULT_OFF_CODE)
     POST_NIGHT_CODE = config.get("post_night_code", DEFAULT_POST_NIGHT_CODE)
     PAID_LEAVE_CODE = config.get("paid_leave_code", DEFAULT_PAID_LEAVE_CODE)
+    EARLY_CODE = config.get("early_shift_code", DEFAULT_EARLY_CODE)
+    LATE_CODE = config.get("late_shift_code", DEFAULT_LATE_CODE)
     OFF_CODES = {OFF_CODE, PAID_LEAVE_CODE, POST_NIGHT_CODE}
     WEEK_START = DEFAULT_WEEK_START_WEEKDAY  # 範囲の確認は、下の入力検査で行う
 
@@ -192,6 +196,20 @@ def audit(data):
             if b <= a or b-a > timedelta(hours=24) or float(spec["break_minutes"]) < 0:
                 raise ValueError(f"勤務設定 {code} の時間が不正")
         check_facility_settings(config, bool(data.get("leave_ledger")))
+        # 早番・遅番の勤務コード(既定は「早」「遅」)。人数の下限が1以上なら、勤務区分にあるコードでなければならない。
+        if EARLY_CODE == LATE_CODE:
+            raise ValueError("施設設定 early_shift_code と late_shift_code が同じ勤務コードです")
+        for key, label, code_value, minimum_key in (
+            ("early_shift_code", "早番", EARLY_CODE, "early_min"),
+            ("late_shift_code", "遅番", LATE_CODE, "late_min"),
+        ):
+            if not isinstance(code_value, str):
+                raise ValueError(f"施設設定 {key} が不正(勤務コードは文字で指定してください)")
+            if config[minimum_key] > 0 and code_value not in shifts:
+                raise ValueError(
+                    f"施設設定 {key} が不正({label}の勤務コード「{code_value}」が勤務区分にありません。"
+                    f"コードを変えた場合は {key} で指定してください)"
+                )
         WEEK_START = config.get("week_start_weekday", DEFAULT_WEEK_START_WEEKDAY)
         day_start = stamp("2000-01-01T"+config["day_start"]).time()
         day_end = stamp("2000-01-01T"+config["day_end"]).time()
@@ -376,10 +394,10 @@ def audit(data):
         if datetime.combine(day, day_start) >= end:
             continue
         for floor in floors:
-            for code, limit in [("早",config["early_min"]),("遅",config["late_min"])]:
+            for code, limit in [(EARLY_CODE,config["early_min"]),(LATE_CODE,config["late_min"])]:
                 count = sum(a["date"]==day and a["code"]==code and a["floor"]==floor for a in assignments)
                 if count < limit:
-                    flag("EARLY_SHORT" if code=="早" else "LATE_SHORT", f"{code}番 {count}/{limit}人", when=day, floor=floor)
+                    flag("EARLY_SHORT" if code==EARLY_CODE else "LATE_SHORT", f"{code}番 {count}/{limit}人", when=day, floor=floor)
         night_rows = [a for a in assignments if a["date"]==day and shifts[a["code"]].get("night")]
         if sum(a["floor"]==SUPERVISOR for a in night_rows) < config["night_supervisors"]:
             flag("NIGHT_SUPERVISOR_SHIFT", "夜勤統括の開始人数不足", when=day, floor=SUPERVISOR)

@@ -404,3 +404,75 @@ def test_valid_facility_settings_are_still_accepted(baseline):
     assert not any(x['code']=='INPUT_INVALID' for x in audit(data)['issues'])
     data['config'].update(interval_hours=0,week_start_weekday=0,special_clause=False)
     assert not any(x['code']=='INPUT_INVALID' for x in audit(data)['issues'])
+
+
+def _with_renamed_early_late(baseline, early='E', late='L', declare=True):
+    """早・遅の勤務コードを別の名前に付け替えたデータを作る。"""
+
+    data=deepcopy(baseline)
+    remap={'早':early,'遅':late}
+    data['config']['shifts']={remap.get(k,k):v for k,v in data['config']['shifts'].items()}
+    for row in data['schedule']+data['requests']:
+        row['code']=remap.get(row['code'],row['code'])
+    for row in data['staff']:
+        row['allowed_codes']='・'.join(remap.get(c,c) for c in row['allowed_codes'].split('・'))
+    if declare:
+        data['config']['early_shift_code']=early
+        data['config']['late_shift_code']=late
+    return data
+
+
+def test_early_late_codes_are_configurable(baseline):
+    """早番・遅番の勤務コードもconfigで変えられる。名前だけ変えても、判定結果(件数)は変わらない。"""
+    before=audit(baseline)
+    after=audit(_with_renamed_early_late(baseline))
+    assert after['counts']==before['counts']
+    assert after['status']==before['status']
+    assert not any(x['code'] in ('EARLY_SHORT','LATE_SHORT') for x in after['issues'])
+
+
+def test_early_shortage_is_still_detected_with_custom_code(baseline):
+    """コードを変えても、下限(4人)を割れば、従来のコードのときと同じ件数の早番不足を検出する。"""
+
+    def drop_two_early_on_1f(data, code):
+        floors={row['staff_id']:row['floor'] for row in data['staff']}
+        targets=[r for r in data['schedule']
+                 if r['code']==code and r['date']=='2026-10-06' and (r.get('floor') or floors[r['staff_id']])=='1F'][:2]
+        assert len(targets)==2
+        for row in targets:
+            data['schedule'].remove(row)
+        return data
+
+    original=audit(drop_two_early_on_1f(deepcopy(baseline),'早'))
+    renamed=audit(drop_two_early_on_1f(_with_renamed_early_late(baseline),'E'))
+    original_count=sum(x['code']=='EARLY_SHORT' for x in original['issues'])
+    assert original_count>=1
+    assert sum(x['code']=='EARLY_SHORT' for x in renamed['issues'])==original_count
+
+
+def test_renamed_codes_without_config_are_input_invalid_not_false_shortage(baseline):
+    """コードを変えたのにconfigで指定し忘れたとき、大量の「不足」ではなく、原因が分かる入力エラーにする。"""
+    result=audit(_with_renamed_early_late(baseline,declare=False))
+    invalid=[x for x in result['issues'] if x['code']=='INPUT_INVALID']
+    assert result['status']=='RED'
+    assert invalid and 'early_shift_code' in invalid[0]['message']
+    assert not any(x['code'] in ('EARLY_SHORT','LATE_SHORT') for x in result['issues'])
+
+
+def test_same_early_and_late_code_is_input_invalid(baseline):
+    data=deepcopy(baseline);data['config']['early_shift_code']='早';data['config']['late_shift_code']='早'
+    assert any(x['code']=='INPUT_INVALID' for x in audit(data)['issues'])
+
+
+def test_non_string_early_code_is_input_invalid(baseline):
+    data=deepcopy(baseline);data['config']['early_shift_code']=1
+    assert any(x['code']=='INPUT_INVALID' for x in audit(data)['issues'])
+
+
+def test_early_code_not_required_when_minimum_is_zero(baseline):
+    """早番の下限が0人なら、早番のコードが勤務区分になくても入力エラーにしない。"""
+    data=_with_renamed_early_late(baseline,declare=False)
+    data['config']['early_min']=0
+    data['config']['late_shift_code']='L'
+    messages=[x['message'] for x in audit(data)['issues'] if x['code']=='INPUT_INVALID']
+    assert not any('early_shift_code' in m for m in messages)

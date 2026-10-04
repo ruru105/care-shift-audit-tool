@@ -1,6 +1,4 @@
-# シフト違反チェッカー(Shift Rule Checker)
-
-旧称:Care Shift Audit Tool(GitHubのリポジトリ名は`care-shift-audit-tool`のままです)。
+# Care Shift Audit Tool
 
 **勤務表上の人数と、実際に現場にいる人数のずれを見つけるPython監査ツールです。**
 休憩・入浴介助・他フロア応援を考慮し、30分ごとに「いつ・どこで・何人不足するか」を示します。
@@ -59,7 +57,7 @@ V1は架空施設向けのポートフォリオ・検証版です。正常基準
 
 ## Configuration Beyond Defaults
 
-「統括」という役割名・「統」という勤務コード、「休・明・有」の3コード、週の起算曜日は、config.jsonの`supervisor_role`・`supervisor_shift_code`・`off_code`・`post_night_code`・`paid_leave_code`・`week_start_weekday`で施設ごとに変更できます。未指定の場合は元の値のまま動作し、既存データの判定結果は変わりません。
+「統括」という役割名・「統」という勤務コード、「休・明・有」の3コード、「早」「遅」の勤務コード、週の起算曜日は、config.jsonの`supervisor_role`・`supervisor_shift_code`・`off_code`・`post_night_code`・`paid_leave_code`・`early_shift_code`・`late_shift_code`・`week_start_weekday`で施設ごとに変更できます。未指定の場合は元の値のまま動作し、既存データの判定結果は変わりません。早番・遅番のコードを変えたのに`early_shift_code`・`late_shift_code`を指定し忘れた場合は、大量の「人数不足」ではなく、原因が分かる入力エラー(配布不可)として表示します。
 
 ## Human / AI Collaboration
 
@@ -72,7 +70,7 @@ flowchart TB
     H["作者（介護現場経験者）<br/>現場課題の発見<br/>最低人数・休憩・統括ルール<br/>要件と採否の最終判断"]
     A["AI（開発支援）<br/>既存Excelの分析<br/>仕様整理・Python実装<br/>テスト・Excel・公開資料作成"]
     C["共同で具体化<br/>勤務人数と実配置の分離<br/>法令と施設ルールの区別<br/>未確認時の配布停止"]
-    V["シフト違反チェッカー V1<br/>Human-led / AI-assisted<br/>人間主導・AI支援の公開作品"]
+    V["Care Shift Audit Tool V1<br/>Human-led / AI-assisted<br/>人間主導・AI支援の公開作品"]
 
     H --> C
     A --> C
