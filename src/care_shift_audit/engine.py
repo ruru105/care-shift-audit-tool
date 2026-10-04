@@ -114,6 +114,41 @@ def distribution_status(issues):
     return "RED" if "RED" in levels else "YELLOW" if "YELLOW" in levels else "GREEN"
 
 
+def is_whole_number(value, minimum=0, maximum=None):
+    """整数か(True/Falseは整数として扱わない)。minimum以上、maximumがあればその以下。"""
+    if isinstance(value, bool) or not isinstance(value, int):
+        return False
+    return value >= minimum and (maximum is None or value <= maximum)
+
+
+def is_plain_number(value, minimum=0):
+    """数値(整数または小数)か。True/False・非数・無限大は不可。minimum以上。"""
+    if isinstance(value, bool) or not isinstance(value, (int, float)):
+        return False
+    return value == value and abs(value) != float("inf") and value >= minimum
+
+
+def check_facility_settings(config, has_leave_rows):
+    """施設設定の型・範囲を確認する。不正なら、配布不可として扱えるよう理由つきのValueErrorにする。"""
+    for key in ["day_min", "night_min", "early_min", "late_min", "free_supervisor_min"]:
+        if not is_whole_number(config[key]):
+            raise ValueError(f"人数設定 {key} が不正(0以上の整数で指定してください)")
+    for key in ["night_continuous_minutes", "night_supervisors", "annual_holidays"]:
+        if key not in config or not is_whole_number(config[key]):
+            raise ValueError(f"施設設定 {key} が不正(0以上の整数で指定してください)")
+    if "interval_hours" not in config or not is_plain_number(config["interval_hours"]):
+        raise ValueError("施設設定 interval_hours が不正(0以上の数値で指定してください)")
+    if "week_start_weekday" in config and not is_whole_number(config["week_start_weekday"], 0, 6):
+        raise ValueError("施設設定 week_start_weekday が不正(0=月曜〜6=日曜の整数で指定してください)")
+    if "special_clause" in config and not isinstance(config["special_clause"], bool):
+        raise ValueError("施設設定 special_clause が不正(true か false で指定してください)")
+    if "as_of" in config or has_leave_rows:
+        try:
+            date.fromisoformat(str(config["as_of"]))
+        except (KeyError, ValueError):
+            raise ValueError("施設設定 as_of が不正(YYYY-MM-DD の日付で指定してください)")
+
+
 def audit(data):
     config = data["config"]
     issues, coverage, workload = [], [], []
@@ -124,7 +159,7 @@ def audit(data):
     POST_NIGHT_CODE = config.get("post_night_code", DEFAULT_POST_NIGHT_CODE)
     PAID_LEAVE_CODE = config.get("paid_leave_code", DEFAULT_PAID_LEAVE_CODE)
     OFF_CODES = {OFF_CODE, PAID_LEAVE_CODE, POST_NIGHT_CODE}
-    WEEK_START = int(config.get("week_start_weekday", DEFAULT_WEEK_START_WEEKDAY))
+    WEEK_START = DEFAULT_WEEK_START_WEEKDAY  # 範囲の確認は、下の入力検査で行う
 
     def week_of(day):
         return day - timedelta(days=(day.weekday() - WEEK_START) % 7)
@@ -156,9 +191,8 @@ def audit(data):
             b = stamp("2000-01-01T" + spec["end"]) + timedelta(days=int(spec["next_day"]))
             if b <= a or b-a > timedelta(hours=24) or float(spec["break_minutes"]) < 0:
                 raise ValueError(f"勤務設定 {code} の時間が不正")
-        for key in ["day_min", "night_min", "early_min", "late_min", "free_supervisor_min"]:
-            if not isinstance(config[key], int) or config[key] < 0:
-                raise ValueError(f"人数設定 {key} が不正")
+        check_facility_settings(config, bool(data.get("leave_ledger")))
+        WEEK_START = config.get("week_start_weekday", DEFAULT_WEEK_START_WEEKDAY)
         day_start = stamp("2000-01-01T"+config["day_start"]).time()
         day_end = stamp("2000-01-01T"+config["day_end"]).time()
         if day_start >= day_end:

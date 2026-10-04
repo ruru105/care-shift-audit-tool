@@ -353,3 +353,54 @@ def test_stop_reason_is_html_escaped(tmp_path):
     html_text = (tmp_path/'report.html').read_text(encoding='utf-8')
     assert '<script>alert' not in html_text
     assert '&lt;script&gt;' in html_text
+
+
+BAD_FACILITY_SETTINGS=[
+    ('interval_hours','bad'),
+    ('interval_hours',None),
+    ('interval_hours',-5),
+    ('interval_hours',True),
+    ('night_continuous_minutes','x'),
+    ('night_continuous_minutes',-1),
+    ('night_supervisors','two'),
+    ('night_supervisors',-1),
+    ('annual_holidays','x'),
+    ('as_of','bad-date'),
+    ('week_start_weekday','x'),
+    ('week_start_weekday',9),
+    ('day_min',True),
+    ('special_clause','true'),
+]
+
+
+@pytest.mark.parametrize('key,value',BAD_FACILITY_SETTINGS)
+def test_bad_facility_setting_is_input_invalid_not_exception(baseline,key,value):
+    """施設設定の型・範囲が不正でも例外で止まらず、配布不可(RED)として理由つきで返す。"""
+    data=deepcopy(baseline);data['config'][key]=value
+    result=audit(data)
+    invalid=[x for x in result['issues'] if x['code']=='INPUT_INVALID']
+    assert result['status']=='RED'
+    assert invalid and key in invalid[0]['message']
+
+
+def test_missing_required_facility_setting_is_input_invalid(baseline):
+    data=deepcopy(baseline);del data['config']['interval_hours']
+    result=audit(data)
+    assert result['status']=='RED'
+    assert any('interval_hours' in x['message'] for x in result['issues'] if x['code']=='INPUT_INVALID')
+
+
+def test_bad_facility_setting_still_produces_report(baseline,tmp_path):
+    data=deepcopy(baseline);data['config']['interval_hours']='bad'
+    result=export_report(data,tmp_path)
+    assert result['status']=='RED'
+    assert '配布不可' in (tmp_path/'report.html').read_text(encoding='utf-8')
+
+
+def test_valid_facility_settings_are_still_accepted(baseline):
+    """境界の正常値(0・小数・日曜始まり・特別条項あり)は、不正扱いにならないこと。"""
+    data=deepcopy(baseline)
+    data['config'].update(interval_hours=11.5,night_supervisors=0,week_start_weekday=6,special_clause=True)
+    assert not any(x['code']=='INPUT_INVALID' for x in audit(data)['issues'])
+    data['config'].update(interval_hours=0,week_start_weekday=0,special_clause=False)
+    assert not any(x['code']=='INPUT_INVALID' for x in audit(data)['issues'])
