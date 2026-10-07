@@ -135,8 +135,9 @@ def check_facility_settings(config, has_leave_rows):
     for key in ["day_min", "night_min", "early_min", "late_min", "free_supervisor_min"]:
         if not is_whole_number(config[key]):
             raise ValueError(f"人数設定 {key} が不正(0以上の整数で指定してください)")
-    # 目標人数(early_target・late_target)は任意。指定するなら0以上の整数で、最低人数以上にする。
-    for target_key, minimum_key in (("early_target", "early_min"), ("late_target", "late_min")):
+    # 目標人数(early_target・late_target・day_target・night_target)は任意。指定するなら0以上の整数で、最低人数以上にする。
+    for target_key, minimum_key in (("early_target", "early_min"), ("late_target", "late_min"),
+                                    ("day_target", "day_min"), ("night_target", "night_min")):
         if target_key in config:
             if not is_whole_number(config[target_key]):
                 raise ValueError(f"人数設定 {target_key} が不正(0以上の整数で指定してください)")
@@ -421,6 +422,8 @@ def audit(data):
     occupied_by_time = defaultdict(list)
     for (sid, point), group in occupied.items():
         occupied_by_time[point].append((sid, group))
+    below_target = {}   # (期間の開始日, フロア, 日中/夜間) -> (最小の実働人数, 最初の時刻)
+    short_periods = set()   # 最低人数割れ(重大NG)が出ている期間。目標人数の警告は重ねて出さない
     for point in ticks(start, end):
         day_time = day_start <= point.time() < day_end
         buckets = {f:dict(planned=set(), breaks=set(), bath=set(), other=set(), out=set(), incoming=set(), active=set()) for f in floors+[SUPERVISOR]}
@@ -454,6 +457,27 @@ def audit(data):
             coverage.append(row)
             if deficit:
                 flag("COVERAGE_SHORT", f"実働{row['active']}人・最低{minimum}人・不足{deficit}人", when=point, floor=floor)
+            if floor != SUPERVISOR:
+                # 夜間は日付をまたぐため、開始日側(日中開始時刻より前は前日)でまとめる。
+                period_day = point.date() if (day_time or point.time() >= day_end) else point.date() - timedelta(days=1)
+                period = (period_day, floor, "day" if day_time else "night")
+                if deficit:
+                    short_periods.add(period)
+                else:
+                    target = config.get("day_target" if day_time else "night_target")
+                    if target is not None and len(b["active"]) < target:
+                        old = below_target.get(period)
+                        if old is None or len(b["active"]) < old[0]:
+                            below_target[period] = (len(b["active"]), point if old is None else old[1])
+
+    # 日中・夜勤の目標人数。最低人数は満たすが目標に届かない期間を、1期間(日・フロア・日中/夜間)につき1件の要確認として出す。
+    for (period_day, floor, kind), (lowest, first_point) in sorted(below_target.items()):
+        if (period_day, floor, kind) in short_periods:
+            continue
+        key, label = ("day_target", "日中") if kind == "day" else ("night_target", "夜勤")
+        flag("DAY_BELOW_TARGET" if kind == "day" else "NIGHT_BELOW_TARGET",
+             f"{label}の実働が最少{lowest}人(最低人数は満たしているが、目標{config[key]}人に未達。最初の時刻 {first_point:%H:%M})",
+             when=period_day, floor=floor, severity="YELLOW", category="目標人数")
 
     # 残業は候補審査のみ。配置人数・勤務時間へ加算しない。
     for row in data.get("overtime_candidates", []):

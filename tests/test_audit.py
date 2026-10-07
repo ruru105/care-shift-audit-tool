@@ -562,3 +562,92 @@ def test_invalid_target_is_input_invalid(baseline,key,value):
     data=deepcopy(baseline);data['config'][key]=value
     invalid=_issues(audit(data),'INPUT_INVALID')
     assert invalid and key in invalid[0]['message']
+
+
+# ---- 日中・夜勤の目標人数(day_target・night_target)に届かない警告 ----
+
+def _with_targets(data, **targets):
+    data=deepcopy(data)
+    data['config'].update(targets)
+    return data
+
+
+def _non_target_issues(result):
+    return [x for x in result['issues'] if x['code'] not in ('DAY_BELOW_TARGET','NIGHT_BELOW_TARGET')]
+
+
+def test_no_day_night_target_setting_means_no_warning(baseline):
+    result=audit(baseline)
+    assert not _issues(result,'DAY_BELOW_TARGET','NIGHT_BELOW_TARGET')
+    assert result['counts']['YELLOW']==5
+
+
+def test_night_target_above_actual_gives_yellow_warnings_only(baseline):
+    """夜勤は全フロア・全期間で実働2人(最低2人)。目標3人なら、期間×フロアごとに1件の要確認が出て、他の結果は変わらない。"""
+    control=audit(baseline)
+    result=audit(_with_targets(baseline,night_target=3))
+    warnings=_issues(result,'NIGHT_BELOW_TARGET')
+    assert len(warnings)==24   # 夜間8期間(開始日10/4〜10/11)×3フロア
+    assert {w['severity'] for w in warnings}=={'YELLOW'}
+    assert {w['floor'] for w in warnings}=={'1F','2F','3F'}
+    assert len({(w['when'],w['floor']) for w in warnings})==24   # 1期間1フロアにつき1件
+    assert not _issues(result,'DAY_BELOW_TARGET')
+    assert _non_target_issues(result)==_non_target_issues(control)
+    assert result['counts'].get('RED',0)==0 and result['status']=='YELLOW'
+
+
+def test_day_target_above_actual_warns_once_per_day_and_floor(baseline):
+    """日中の実働は最少5人(最低4人)。目標11人なら、日×フロアごとに1件(7日×3フロア)。"""
+    control=audit(baseline)
+    result=audit(_with_targets(baseline,day_target=11))
+    warnings=_issues(result,'DAY_BELOW_TARGET')
+    assert len(warnings)==21
+    assert len({(w['when'],w['floor']) for w in warnings})==21
+    assert all('目標11人に未達' in w['message'] for w in warnings)
+    assert _non_target_issues(result)==_non_target_issues(control)
+
+
+def test_day_target_met_never_warns(baseline):
+    result=audit(_with_targets(baseline,day_target=5,night_target=2))
+    assert not _issues(result,'DAY_BELOW_TARGET','NIGHT_BELOW_TARGET')
+
+
+def test_target_equal_to_minimum_never_warns_for_day_and_night(baseline):
+    result=audit(_with_targets(baseline,day_target=4,night_target=2))
+    assert not _issues(result,'DAY_BELOW_TARGET','NIGHT_BELOW_TARGET')
+
+
+def test_short_night_is_red_and_not_double_reported_as_below_target(baseline):
+    """夜勤の最低人数割れ(重大NG)が出た期間・フロアには、目標人数未達の警告を重ねて出さない。他のフロアは警告のまま。"""
+    modified=_remove_shift(deepcopy(baseline),'夜','2026-10-04','1F',2)
+    result=audit(_with_targets(modified,night_target=3))
+    assert any(x['code']=='COVERAGE_SHORT' and x['floor']=='1F' for x in result['issues'])
+    assert not [w for w in _issues(result,'NIGHT_BELOW_TARGET') if w['floor']=='1F' and w['when']=='2026-10-04']
+    assert [w for w in _issues(result,'NIGHT_BELOW_TARGET') if w['floor']=='2F' and w['when']=='2026-10-04']
+
+
+@pytest.mark.parametrize('key,value',[('day_target',3),('night_target',1),('day_target','5'),
+                                       ('night_target',True),('day_target',-1),('night_target',2.5)])
+def test_invalid_day_night_target_is_input_invalid(baseline,key,value):
+    invalid=_issues(audit(_with_targets(baseline,**{key:value})),'INPUT_INVALID')
+    assert invalid and key in invalid[0]['message']
+
+
+def test_partly_short_day_is_red_only_and_other_days_still_warn(baseline):
+    """日中の一部の時間帯だけ最低人数を割った日・フロアは重大NGのみ。同じ日の他フロアと別の日は、目標人数未達の警告が残る。"""
+    modified=_remove_shift(deepcopy(baseline),'早','2026-10-06','1F',3)
+    result=audit(_with_targets(modified,day_target=11))
+    assert any(x['code']=='COVERAGE_SHORT' and x['floor']=='1F' and x['when'].startswith('2026-10-06') for x in result['issues'])
+    day_warnings={(w['when'],w['floor']) for w in _issues(result,'DAY_BELOW_TARGET')}
+    assert ('2026-10-06','1F') not in day_warnings
+    assert ('2026-10-06','2F') in day_warnings and ('2026-10-07','1F') in day_warnings
+    assert len(day_warnings)==20
+
+
+def test_below_target_message_reports_the_lowest_headcount_of_the_period(baseline):
+    """警告に書く「最少○人」は、その日・フロアの30分ごとの実働人数の最小値と一致する。"""
+    result=audit(_with_targets(baseline,day_target=11))
+    for w in _issues(result,'DAY_BELOW_TARGET'):
+        counts=[row['active'] for row in result['coverage']
+                if row['floor']==w['floor'] and row['time'].startswith(w['when']) and '07:00'<=row['time'][11:16]<'19:00']
+        assert f"最少{min(counts)}人" in w['message']
