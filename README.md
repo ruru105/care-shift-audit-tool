@@ -100,7 +100,7 @@ flowchart TB
     H["作者<br/>課題の発見<br/>最低人数・休憩・統括ルール<br/>要件と採否の最終判断"]
     A["AI（開発支援）<br/>既存Excelの分析<br/>仕様整理・Python実装<br/>テスト・Excel・公開資料作成"]
     C["共同で具体化<br/>勤務人数と実配置の分離<br/>法令と施設ルールの区別<br/>未確認時の配布停止"]
-    V["Care Shift Audit Tool V1<br/>Human-led / AI-assisted<br/>人間主導・AI支援の公開作品"]
+    V["シフト違反チェッカー(Care Shift Audit Tool) V1<br/>Human-led / AI-assisted<br/>人間主導・AI支援の公開作品"]
 
     H --> C
     A --> C

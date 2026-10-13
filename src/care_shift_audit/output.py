@@ -64,7 +64,7 @@ def write_stop_report(folder, reason):
     folder.mkdir(parents=True,exist_ok=True)
     page = f'''<!doctype html><html lang="ja"><meta charset="utf-8"><title>勤務表監査 処理停止</title>
     <style>body{{font-family:system-ui,sans-serif;margin:40px;color:#23354b}}.status{{font-size:28px;color:#b42318}}</style>
-    <h1>Care Shift Audit Tool V1</h1><p class="status">処理停止</p>
+    <h1>シフト違反チェッカー(Care Shift Audit Tool) V1</h1><p class="status">処理停止</p>
     <p>入力を確認できなかったため、今回は監査結果を作成していません。</p>
     <p>理由: {html.escape(str(reason))}</p>
     <p>このフォルダにあるほかのファイルは、前回までの結果が残っている可能性があります。配布に使わないでください。</p></html>'''
@@ -92,7 +92,7 @@ def export_report(data, folder, formal=False):
     page = f'''<!doctype html><html lang="ja"><meta charset="utf-8"><title>勤務表監査結果</title>
     <style>body{{font-family:system-ui,sans-serif;margin:40px;color:#23354b}}h1{{font-size:26px}}
     .status{{font-size:28px;color:{color}}}table{{border-collapse:collapse;width:100%}}td,th{{padding:9px;text-align:left;border-bottom:1px solid #ddd}}th{{background:#eaf0f5}}</style>
-    <h1>Care Shift Audit Tool V1</h1><p class="status">{LABELS[result['status']]}</p>
+    <h1>シフト違反チェッカー(Care Shift Audit Tool) V1</h1><p class="status">{LABELS[result['status']]}</p>
     <p>重大NG {result['counts'].get('RED',0)}件 ／ 要確認 {result['counts'].get('YELLOW',0)}件</p>
     <p>入力変更後は再監査してください。これは保存時点の結果です。架空データ。</p>
     {excluded_note}
