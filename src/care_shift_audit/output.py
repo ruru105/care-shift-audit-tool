@@ -5,8 +5,10 @@ import json
 from pathlib import Path
 from .engine import audit
 from .io import write_csv
+from .suggest import suggest_fixes
 
 LABELS = {"RED":"配布不可", "YELLOW":"要確認", "GREEN":"配布可能"}
+SUGGEST_LABELS = {"when":"日時", "floor":"フロア", "message":"内容", "description":"検討材料"}
 
 # CSVの見出し行を日本語表記にするための対応表。内部で使うキー名(英語)はここでは変えない。
 ISSUES_LABELS = {"severity":"重大度", "code":"検出コード", "category":"分類", "staff_id":"職員ID",
@@ -79,7 +81,10 @@ def export_report(data, folder, formal=False):
     formal_path = folder/'staff_formal.csv'
     if result['status'] != 'GREEN' and formal_path.exists():
         formal_path.unlink()
-    (folder/'audit.json').write_text(json.dumps(result,ensure_ascii=False,indent=2),encoding='utf-8')
+    # audit.jsonは配布判定の記録用。detail(休憩等の内訳。suggest.py専用で監査エンジンを
+    # 直接呼べば得られる)は含めず、ファイルの肥大化を避ける。
+    public_result = dict(result, coverage=[{k:v for k,v in row.items() if k != 'detail'} for row in result['coverage']])
+    (folder/'audit.json').write_text(json.dumps(public_result,ensure_ascii=False,indent=2),encoding='utf-8')
     write_csv(folder/'issues.csv',result['issues'],['severity','code','category','staff_id','when','floor','message'],labels=ISSUES_LABELS)
     write_csv(folder/'coverage.csv',result['coverage'],['time','floor','planned','breaks','bath','other','out','incoming','active','minimum','deficit','judgment','staff_ids'],labels=COVERAGE_LABELS)
     write_csv(folder/'workload.csv',result['workload'],['staff_id','period','work_hours','contract_hours'],labels=WORKLOAD_LABELS)
@@ -103,4 +108,46 @@ def export_report(data, folder, formal=False):
         if result['status']!='GREEN':
             raise ValueError('正式配布を停止しました。重大NGまたは未確認事項が残っています。')
         write_csv(formal_path,rows,['date','weekday','staff_id','name','code','time','status'],labels=STAFF_DRAFT_LABELS)
+    return result
+
+
+def export_suggestions(data, folder, max_per_deficit=2, max_deficits=30):
+    """不足枠の修正候補(検討材料)を別ファイルに出力する。配布可否の判定(report.html・
+    audit.json)には一切影響しない、完全に独立したオプション出力。
+
+    suggest.pyの結果をそのままcsv/htmlにする。候補が見つからない不足枠も含め、
+    「ここは解消策が見つからなかった」ことも分かるようにする。
+    """
+    folder = Path(folder)
+    folder.mkdir(parents=True, exist_ok=True)
+    result = suggest_fixes(data, max_per_deficit=max_per_deficit, max_deficits=max_deficits)
+    (folder / 'suggestions.json').write_text(json.dumps(result, ensure_ascii=False, indent=2), encoding='utf-8')
+
+    rows = []
+    for item in result['items']:
+        if item['candidates']:
+            for cand in item['candidates']:
+                rows.append(dict(when=item['when'], floor=item['floor'], message=item['message'],
+                                 description=cand['description']))
+        else:
+            rows.append(dict(when=item['when'], floor=item['floor'], message=item['message'],
+                             description='(このV1の候補探索では見つからず。現場で確認してください)'))
+    write_csv(folder / 'suggestions.csv', rows, ['when', 'floor', 'message', 'description'], labels=SUGGEST_LABELS)
+
+    esc = lambda value: html.escape(str(value))
+    table = ''.join('<tr>'+''.join('<td>'+esc(row[k])+'</td>' for k in ['when','floor','message','description'])+'</tr>' for row in rows)
+    truncated_note = (f'<p><strong>不足枠が{result["total_deficits"]}件あり、候補探索は先頭{max_deficits}件のみ行いました。'
+                      f'件数そのものが、休憩等の微調整では解消しない人員不足を示している可能性があります。</strong></p>'
+                      if result['truncated'] else '')
+    page = f'''<!doctype html><html lang="ja"><meta charset="utf-8"><title>不足枠の修正案(検討材料)</title>
+    <style>body{{font-family:system-ui,sans-serif;margin:40px;color:#23354b}}h1{{font-size:24px}}
+    table{{border-collapse:collapse;width:100%}}td,th{{padding:9px;text-align:left;border-bottom:1px solid #ddd}}th{{background:#eaf0f5}}</style>
+    <h1>不足枠の修正案(検討材料)</h1>
+    <p>これは唯一の正解を示すものではなく、現場で検討するための一例です。実際の配置・判断を否定するものではありません。
+    ここに出した候補は、休憩・入浴介助のタイミングを30分ずらした場合に、実際にこの監査エンジンで不足が解消し、
+    かつ新しい重大NGが発生しないことを機械的に確認できたものだけです。最終判断は現場で行ってください。</p>
+    <p>不足枠 {result["total_deficits"]}件のうち、候補探索を行ったのは{len(result["items"])}件。</p>
+    {truncated_note}
+    <table><tr><th>日時</th><th>フロア</th><th>不足の内容</th><th>検討材料</th></tr>{table}</table></html>'''
+    (folder / 'suggestions.html').write_text(page, encoding='utf-8')
     return result

@@ -453,7 +453,10 @@ def audit(data):
             deficit = max(0, minimum-len(b["active"]))
             row = dict(time=point.isoformat(timespec="minutes"), floor=floor,
                        **{k:len(v) for k,v in b.items()}, minimum=minimum, deficit=deficit,
-                       judgment="不足" if deficit else "充足", staff_ids="・".join(sorted(b["active"])))
+                       judgment="不足" if deficit else "充足", staff_ids="・".join(sorted(b["active"])),
+                       # 休憩等をずらす提案(suggest.py)が使う内訳。既存のCSV出力(write_csvはfields指定で
+                       # 不要な列を無視する)や既存の利用箇所には影響しない追加フィールド。
+                       detail={k: sorted(v) for k, v in b.items()})
             coverage.append(row)
             if deficit:
                 flag("COVERAGE_SHORT", f"実働{row['active']}人・最低{minimum}人・不足{deficit}人", when=point, floor=floor)
